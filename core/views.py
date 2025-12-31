@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from .models import Produto
 
 def index (request):
     return render(request, 'index.html')
@@ -7,9 +6,12 @@ def index (request):
 def about(request):
     return render(request, 'about.html')
 
-def produto (request):
-    produtos = Produto.objects.all()
-    context = {
-        'produtos': produtos
-    }
-    return render(request, 'produto.html', context)
+def cadastro(request):
+    return render(request, 'cadastro.html')
+
+def login(request):
+    return render(request, 'login.html')
+
+def cadastro_anamnese(request):
+    return render(request, 'cadastro_anamnese.html')
+

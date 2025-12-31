@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Nova Anamnese - MedTools{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card card-custom p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold mb-0">Ficha de Anamnese</h2>
+                <span class="badge bg-info text-dark">ID: #8829</span>
+            </div>
+
+            <ul class="nav nav-tabs mb-4" id="anamneseTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="dados-tab" data-bs-toggle="tab" data-bs-target="#dados" type="button" role="tab">
+                        <i class="bi bi-person-vcard me-2"></i>Identificação
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="queixa-tab" data-bs-toggle="tab" data-bs-target="#queixa" type="button" role="tab">
+                        <i class="bi bi-clipboard2-pulse me-2"></i>Histórico e Queixa
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="habitos-tab" data-bs-toggle="tab" data-bs-target="#habitos" type="button" role="tab">
+                        <i class="bi bi-heart-pulse me-2"></i>Hábitos e Antecedentes
+                    </button>
+                </li>
+            </ul>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="tab-content" id="anamneseTabsContent">
+
+                    <div class="tab-pane fade show active" id="dados" role="tabpanel">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium">Nome Completo</label>
+                                <input type="text" class="form-control" name="paciente_nome" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-medium">Data de Nascimento</label>
+                                <input type="date" class="form-control" name="paciente_nascimento">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-medium">Sexo</label>
+                                <select class="form-select" name="paciente_sexo">
+                                    <option value="M">Masculino</option>
+                                    <option value="F">Feminino</option>
+                                    <option value="O">Outro</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="queixa" role="tabpanel">
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">Queixa Principal</label>
+                            <input type="text" class="form-control" placeholder="O que trouxe o paciente ao consultório?">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">Histórico da Moléstia Atual (HMA)</label>
+                            <textarea class="form-control" rows="5" placeholder="Descrição detalhada dos sintomas..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="habitos" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="fw-bold">Hábitos de Vida</h6>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="tabagismo">
+                                    <label class="form-check-label" for="tabagismo">Tabagismo</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="etilismo">
+                                    <label class="form-check-label" for="etilismo">Etilismo</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="fw-bold">Antecedentes Familiares</h6>
+                                <textarea class="form-control" rows="3" placeholder="Ex: Hipertensão, Diabetes..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="mt-5 pt-3 border-top d-flex justify-content-end">
+                    <button type="button" class="btn btn-light me-2">Cancelar</button>
+                    <button type="submit" class="btn btn-primary px-5 rounded-pill">Salvar Anamnese</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

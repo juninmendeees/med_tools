@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Cadastro - Anamnese Pro{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card card-anamnese p-4">
+            <h3 class="mb-4">Criar Conta Médica</h3>
+            <form>
+                <div class="mb-3">
+                    <label class="form-label">Nome da Clínica ou Subdomínio</label>
+                    <input type="text" class="form-control" placeholder="ex: clinicasilva" required>
+                    <div class="form-text">Isso definirá seu endereço exclusivo (ex: clinicasilva.projeto.com)</div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-100">Finalizar Cadastro</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

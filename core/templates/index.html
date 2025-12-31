@@ -1,53 +1,11 @@
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-  </head>
-  <body class="bg-light">
+{% extends 'base.html' %}
 
-    <div class="container">
-      <div class="row justify-content-center align-items-center vh-100">
-        <div class="col-12 col-md-6 col-lg-4">
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
 
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h4 class="text-center mb-4">Login</h4>
-
-              <form>
-                <!-- Usuário -->
-                <div class="mb-3">
-                  <label for="usuario" class="form-label">Usuário</label>
-                  <input type="text" class="form-control" id="usuario" placeholder="Digite seu usuário">
-                </div>
-
-                <!-- Senha -->
-                <div class="mb-3">
-                  <label for="senha" class="form-label">Senha</label>
-                  <input type="password" class="form-control" id="senha" placeholder="Digite sua senha">
-                </div>
-
-                <!-- Botões -->
-                <div class="d-flex gap-2 mb-3">
-                  <button type="submit" class="btn btn-primary w-100">Enviar</button>
-                  <button type="reset" class="btn btn-secondary w-100">Limpar</button>
-                </div>
-
-                <!-- Cadastro -->
-                <div class="text-center">
-                  <a href="#" class="text-decoration-none">Cadastre-se</a>
-                </div>
-              </form>
-
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+</body>
 </html>
