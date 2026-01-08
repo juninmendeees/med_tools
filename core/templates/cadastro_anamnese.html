@@ -1,98 +1,334 @@
 {% extends 'base.html' %}
 
-{% block title %}Nova Anamnese - MedTools{% endblock %}
+{% block title %}Anamnese Completa - MedTools{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-lg-10">
+    <div class="col-lg-11">
         <div class="card card-custom p-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="fw-bold mb-0">Ficha de Anamnese</h2>
-                <span class="badge bg-info text-dark">ID: #8829</span>
+                <h2 class="fw-bold mb-0 text-primary">Ficha de Anamnese Completa</h2>
+                <span class="text-muted small">Baseado no Roteiro Pedagógico </span>
             </div>
 
-            <ul class="nav nav-tabs mb-4" id="anamneseTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="dados-tab" data-bs-toggle="tab" data-bs-target="#dados" type="button" role="tab">
-                        <i class="bi bi-person-vcard me-2"></i>Identificação
-                    </button>
+            <ul class="nav nav-pills mb-4 bg-light p-2 rounded" id="anamneseTabs" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#identificacao" type="button">1. Identificação</button>
                 </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="queixa-tab" data-bs-toggle="tab" data-bs-target="#queixa" type="button" role="tab">
-                        <i class="bi bi-clipboard2-pulse me-2"></i>Histórico e Queixa
-                    </button>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#queixa_hma" type="button">2. Queixa e HDA</button>
                 </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="habitos-tab" data-bs-toggle="tab" data-bs-target="#habitos" type="button" role="tab">
-                        <i class="bi bi-heart-pulse me-2"></i>Hábitos e Antecedentes
-                    </button>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#is" type="button">3. Interrogatório (IS)</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#antecedentes" type="button">4. Antecedentes</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#habitos" type="button">5. Hábitos e Vida</button>
                 </li>
             </ul>
 
             <form method="POST">
                 {% csrf_token %}
-                <div class="tab-content" id="anamneseTabsContent">
+                <div class="tab-content border p-3 rounded bg-white">
 
-                    <div class="tab-pane fade show active" id="dados" role="tabpanel">
+                    <div class="tab-pane fade show active" id="identificacao">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Nome</label>
+            <input type="text" class="form-control" name="nome">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label fw-bold">Idade</label>
+            <input type="number" class="form-control" name="idade">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Estado Civil</label>
+            <select class="form-select" name="estado_civil">
+                <option value="solteiro">Solteiro(a)</option>
+                <option value="casado">Casado(a)</option>
+                <option value="divorciado">Divorciado(a)</option>
+                <option value="viuvo">Viúvo(a)</option>
+                <option value="outros">Outros</option>
+            </select>
+        </div>
+
+        <div class="col-md-8">
+            <label class="form-label fw-bold">Endereço/Residência</label>
+            <input type="text" class="form-control" name="endereco" placeholder="Rua, número, bairro e cidade">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Religião</label>
+            <input type="text" class="form-control" name="religiao">
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Cor/Etnia</label>
+            <select class="form-select" name="etnia">
+                <option>Branca</option><option>Parda</option><option>Preta</option><option>Indígena</option><option>Asiática</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Profissão</label>
+            <input type="text" class="form-control" name="profissao">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Plano de Saúde</label>
+            <input type="text" class="form-control" name="plano_saude">
+        </div>
+    </div>
+</div>
+
+<div class="tab-pane fade" id="queixa_hma">
+    <div class="mb-4">
+        <label class="form-label fw-bold text-primary">Queixa Principal (QP)</label>
+        <p class="small text-muted mb-2">Motivo principal da procura. Repetir, se possível, as expressões utilizadas pelo paciente.</p>
+        <textarea class="form-control border-primary" rows="2" name="queixa_principal" placeholder="Ex: 'Dor no peito há 2 horas'"></textarea>
+    </div>
+
+    <div class="mb-3 p-3 bg-light rounded border">
+        <label class="form-label fw-bold text-dark">História da Doença Atual (HDA)</label>
+
+        <div class="alert alert-info py-2 px-3 mb-3 border-0 shadow-sm" style="font-size: 0.85rem;">
+            <ul class="mb-0 ps-3">
+                <li>Permita ao paciente falar de sua doença.</li>
+                <li>Determine o <strong>sintoma-guia</strong>.</li>
+                <li>Descreva o sintoma com suas características e analise-o minuciosamente.</li>
+                <li>Use o sintoma-guia como um fio condutor e estabeleça relações cronológicas.</li>
+                <li>Verifique se a história tem <strong>começo, meio e fim</strong>.</li>
+                <li>Apure evolução, exames e tratamentos já realizados.</li>
+            </ul>
+        </div>
+
+        <textarea class="form-control" rows="8" name="hma" placeholder="Descreva aqui o histórico detalhado..."></textarea>
+    </div>
+</div>
+
+                    <div class="tab-pane fade" id="queixa_hma">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-danger">Queixa Principal </label>
+                            <textarea class="form-control" rows="2" placeholder="Repetir, se possível, as expressões do paciente."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">História da Doença Atual (HMA) </label>
+                            <textarea class="form-control" rows="6" placeholder="Determine o sintoma-guia. Apure evolução, exames e tratamentos já realizados."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Sintoma Guia </label>
+                            <textarea class="form-control" rows="6" placeholder="-> Adicionar uma guia pra cada Inicio, caracteristicas do Sintoma, Fatores de Melhora e Piora, Relação com outras queixas, Evolução e a situação atual."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="is">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label fw-medium">Nome Completo</label>
-                                <input type="text" class="form-control" name="paciente_nome" required>
+                                <h6 class="border-bottom pb-2 fw-bold text-primary">Estado Geral </h6>
+                                <p class="small text-muted">Febre, calafrios, sudorese, astenia, alteração de peso.</p>
+                                <textarea class="form-control" rows="2"></textarea>
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label fw-medium">Data de Nascimento</label>
-                                <input type="date" class="form-control" name="paciente_nascimento">
+                            <div class="col-md-6">
+                                <h6 class="border-bottom pb-2 fw-bold text-primary">Sistema Respiratório </h6>
+                                <p class="small text-muted">Tosse, expectoração, hemoptise, dispneia, chieira.</p>
+                                <textarea class="form-control" rows="2"></textarea>
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label fw-medium">Sexo</label>
-                                <select class="form-select" name="paciente_sexo">
-                                    <option value="M">Masculino</option>
-                                    <option value="F">Feminino</option>
-                                    <option value="O">Outro</option>
-                                </select>
+                            <div class="col-md-6">
+                                <h6 class="border-bottom pb-2 fw-bold text-primary">Sistema Cardiovascular </h6>
+                                <p class="small text-muted">Dor precordial, palpitações, edema, síncope.</p>
+                                <textarea class="form-control" rows="2"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="border-bottom pb-2 fw-bold text-primary">Sistema Digestório </h6>
+                                <p class="small text-muted">Apetite, disfagia, pirose, ritmo intestinal.</p>
+                                <textarea class="form-control" rows="2"></textarea>
                             </div>
                         </div>
                     </div>
 
-                    <div class="tab-pane fade" id="queixa" role="tabpanel">
-                        <div class="mb-3">
-                            <label class="form-label fw-medium">Queixa Principal</label>
-                            <input type="text" class="form-control" placeholder="O que trouxe o paciente ao consultório?">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-medium">Histórico da Moléstia Atual (HMA)</label>
-                            <textarea class="form-control" rows="5" placeholder="Descrição detalhada dos sintomas..."></textarea>
-                        </div>
-                    </div>
+                    <div class="tab-pane fade" id="antecedentes">
+    <div class="row g-4">
 
-                    <div class="tab-pane fade" id="habitos" role="tabpanel">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6 class="fw-bold">Hábitos de Vida</h6>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="tabagismo">
-                                    <label class="form-check-label" for="tabagismo">Tabagismo</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="etilismo">
-                                    <label class="form-check-label" for="etilismo">Etilismo</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <h6 class="fw-bold">Antecedentes Familiares</h6>
-                                <textarea class="form-control" rows="3" placeholder="Ex: Hipertensão, Diabetes..."></textarea>
-                            </div>
-                        </div>
+        <div class="col-12">
+            <h5 class="text-primary border-bottom pb-2 fw-bold"><i class="bi bi-baby me-2"></i>Antecedentes Fisiológicos</h5>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">Gestação e Nascimento</label>
+                    <p class="text-muted mb-1" style="font-size: 0.75rem;">Gestação (normal/complicações), condições do parto, ordem de nascimento e irmãos.</p>
+                    <textarea class="form-control" name="gestacao_nascimento" rows="2"></textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">Desenvolvimento Psicomotor e Neural</label>
+                    <p class="text-muted mb-1" style="font-size: 0.75rem;">Dentição, engatinhar, andar, falar, controle de esfíncteres e aproveitamento escolar.</p>
+                    <textarea class="form-control" name="desenvolvimento_neural" rows="2"></textarea>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label fw-bold small">Desenvolvimento Sexual</label>
+                    <div class="input-group input-group-sm mb-2">
+                        <span class="input-group-text">Puberdade</span>
+                        <select class="form-select" name="puberdade">
+                            <option>Normal</option><option>Precoce</option><option>Tardia</option>
+                        </select>
+                        <span class="input-group-text">Menarca (idade)</span><input type="text" class="form-control">
+                        <span class="input-group-text">Menopausa (idade)</span><input type="text" class="form-control">
+                        <span class="input-group-text">Sexarca (idade)</span><input type="text" class="form-control">
                     </div>
+                    <p class="text-muted mb-1" style="font-size: 0.75rem;">Orientação sexual (HSM, HSH, HSMH, MSH, MSM, MSMH).</p>
+                    <input type="text" class="form-control form-control-sm" name="orientacao_sexual">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+    <h5 class="text-danger border-bottom pb-2 fw-bold"><i class="bi bi-exclamation-triangle me-2"></i>Antecedentes Patológicos</h5>
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="h-100">
+                <label class="form-label fw-bold small mb-1">Doenças da Infância</label>
+                <p class="text-muted mb-2" style="font-size: 0.75rem; height: 1.5rem;">Sarampo, varicela, caxumba, etc.</p>
+                <input type="text" class="form-control" name="doencas_infancia">
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="h-100">
+                <label class="form-label fw-bold small mb-1">Traumas e Acidentes</label>
+                <p class="text-muted mb-2" style="font-size: 0.75rem; height: 1.5rem;">&nbsp;</p> <input type="text" class="form-control" name="traumas">
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="h-100">
+                <label class="form-label fw-bold small mb-1">Alergias</label>
+                <p class="text-muted mb-2" style="font-size: 0.75rem; height: 1.5rem;">&nbsp;</p> <input type="text" class="form-control border-danger shadow-sm" name="alergias">
+            </div>
+        </div>
+
+        </div>
+</div>
+
+        <div class="col-12">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <h5 class="text-dark border-bottom pb-2 fw-bold">História Obstétrica e Paternidade</h5>
+                    <div class="input-group input-group-sm mb-2">
+                        <span class="input-group-text">Gesta:</span><input type="text" class="form-control">
+                        <span class="input-group-text">Para:</span><input type="text" class="form-control">
+                        <span class="input-group-text">Aborto:</span><input type="text" class="form-control">
+                    </div>
+                    <p class="text-muted mb-2" style="font-size: 0.75rem;">Aborto (espontâneo/provocado), Prematuro, Cesárea, Filhos.</p>
+                    <label class="form-label fw-bold small">Imunizações</label>
+                    <input type="text" class="form-control form-control-sm" placeholder="Qual vacina/quando/doses" name="vacinas">
+                </div>
+                <div class="col-md-6">
+                    <h5 class="text-dark border-bottom pb-2 fw-bold">Antecedentes Familiares</h5>
+                    <p class="text-muted mb-1" style="font-size: 0.75rem;">Doenças em pais, irmãos, avós, tios, primos, cônjuge e filhos.</p>
+                    <textarea class="form-control" name="antecedentes_familiares" rows="4"></textarea>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+                    <div class="tab-pane fade" id="habitos">
+    <div class="row g-4">
+
+        <div class="col-12">
+            <h5 class="text-primary border-bottom pb-2 fw-bold"><i class="bi bi-person-walking me-2"></i>Hábitos Pessoais e Atividades</h5>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">Alimentação e Peso</label>
+                    <p class="text-muted mb-1" style="font-size: 0.75rem;">Dieta habitual e manutenção do peso[cite: 95, 100].</p>
+                    <textarea class="form-control" name="alimentacao_peso" rows="2"></textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">Atividades Físicas</label>
+                    <p class="text-muted mb-1" style="font-size: 0.75rem;">Atividades diárias e exercícios regulares[cite: 98].</p>
+                    <textarea class="form-control" name="atividades_fisicas" rows="2"></textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">Ocupação</label>
+                    <p class="text-muted mb-1" style="font-size: 0.75rem;">Ocupação atual e ocupações anteriores[cite: 96].</p>
+                    <input type="text" class="form-control" name="ocupacoes">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">Viagens Recentes</label>
+                    <p class="text-muted mb-1" style="font-size: 0.75rem;">Destino e período de estadia[cite: 97].</p>
+                    <input type="text" class="form-control" name="viagens">
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label fw-bold small">Atividade Sexual</label>
+                    <p class="text-muted mb-1" style="font-size: 0.75rem;">Nº de parceiros, hábitos frequentes e uso de preservativos[cite: 99].</p>
+                    <input type="text" class="form-control" name="atividade_sexual">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <h5 class="text-danger border-bottom pb-2 fw-bold"><i class="bi bi-capsule me-2"></i>Consumo de Substâncias</h5>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold small">Tabaco</label>
+                    <p class="text-muted mb-1" style="font-size: 0.75rem;">Tipo, quantidade, frequência e abstinência[cite: 102].</p>
+                    <textarea class="form-control" name="tabaco" rows="2"></textarea>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold small">Bebida Alcoólica</label>
+                    <p class="text-muted mb-1" style="font-size: 0.75rem;">Tipo, quantidade, frequência e vício[cite: 101].</p>
+                    <textarea class="form-control" name="alcool" rows="2"></textarea>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold small">Outras Drogas/Substâncias</label>
+                    <p class="text-muted mb-1" style="font-size: 0.75rem;">Ilícitas ou outras substâncias utilizadas[cite: 103, 104].</p>
+                    <textarea class="form-control" name="outras_drogas" rows="2"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <h5 class="text-dark border-bottom pb-2 fw-bold"><i class="bi bi-house-heart me-2"></i>Condições Socioeconômicas e Familiares</h5>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">Moradia e Saneamento</label>
+                    <p class="text-muted mb-1" style="font-size: 0.75rem;">Moradia, saneamento básico e coleta de lixo[cite: 105].</p>
+                    <textarea class="form-control" name="moradia_saneamento" rows="2"></textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">Condições Econômicas</label>
+                    <p class="text-muted mb-1" style="font-size: 0.75rem;">Rendimento, dependência e aposentadoria.</p>
+                    <textarea class="form-control" name="condicoes_economicas" rows="2"></textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">Vida Conjugal e Familiar</label>
+                    <p class="text-muted mb-1" style="font-size: 0.75rem;">Relacionamento com familiares e amigos.</p>
+                    <textarea class="form-control" name="ajustamento_familiar" rows="2"></textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">Contatos e Exposição</label>
+                    <p class="text-muted mb-1" style="font-size: 0.75rem;">Contato com pessoas ou animais doentes[cite: 106].</p>
+                    <textarea class="form-control" name="contato_doentes" rows="2"></textarea>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
 
                 </div>
 
-                <div class="mt-5 pt-3 border-top d-flex justify-content-end">
-                    <button type="button" class="btn btn-light me-2">Cancelar</button>
-                    <button type="submit" class="btn btn-primary px-5 rounded-pill">Salvar Anamnese</button>
+                <div class="mt-4 d-flex justify-content-end gap-2">
+                    <button type="reset" class="btn btn-outline-secondary px-4 rounded-pill">Limpar</button>
+                    <button type="submit" class="btn btn-primary px-5 rounded-pill shadow-sm">Salvar Registro Médico</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<style>
+    .nav-pills .nav-link { color: #6c757d; font-weight: 500; }
+    .nav-pills .nav-link.active { background-color: #0d6efd; box-shadow: 0 4px 10px rgba(13, 110, 253, 0.2); }
+    .form-label { font-size: 0.9rem; margin-bottom: 0.3rem; }
+    .tab-pane { min-height: 350px; }
+</style>
 {% endblock %}

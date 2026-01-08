@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import index, about, cadastro, login, cadastro_anamnese
+from .views import index, about, cadastro, login, cadastro_anamnese, contato, dashboard
 
 urlpatterns = [
     path('',index, name='index'),
@@ -7,4 +7,6 @@ urlpatterns = [
     path('cadastro',cadastro, name='cadastro'),
     path('login',login, name='login'),
     path('cadastro_anamnese',cadastro_anamnese, name='cadastro_anamnese'),
+    path('contato',contato, name='contato'),
+    path('dashboard',dashboard, name='dashboard'),
 ]

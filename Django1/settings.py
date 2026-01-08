@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 
 import whitenoise
+from django.conf.global_settings import EMAIL_BACKEND
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -125,3 +126,14 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+#Configurações e E-mail
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+
+#EMAIL_HOST  = 'localhost'
+#EMAIL_HOST_USER= 'no-reply@medtools.com.br'
+#EMAIL_HOST_PASSWORD 'sua senha'
+#EMAIL_PORT= 587
+#EMAIL_USE_TLS = True

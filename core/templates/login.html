@@ -1,54 +1,71 @@
 {% extends 'base.html' %}
-<html lang="pt-BR">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-  </head>
-  <body class="bg-light">
-  {% block content %}
-    <div class="container">
-      <div class="row justify-content-center align-items-center vh-100">
-        <div class="col-12 col-md-6 col-lg-4">
 
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h4 class="text-center mb-4">Login</h4>
+{% block title %}Login - MedTools{% endblock %}
 
-              <form>
-                <!-- Usuário -->
-                <div class="mb-3">
-                  <label for="usuario" class="form-label">Usuário</label>
-                  <input type="text" class="form-control" id="usuario" placeholder="Digite seu usuário">
-                </div>
-
-                <!-- Senha -->
-                <div class="mb-3">
-                  <label for="senha" class="form-label">Senha</label>
-                  <input type="password" class="form-control" id="senha" placeholder="Digite sua senha">
-                </div>
-
-                <!-- Botões -->
-                <div class="d-flex gap-2 mb-3">
-                  <button type="submit" class="btn btn-primary w-100">Enviar</button>
-                  <button type="reset" class="btn btn-secondary w-100">Limpar</button>
-                </div>
-
-                <!-- Cadastro -->
-                <div class="text-center">
-                  <a href="#" class="text-decoration-none">Cadastre-se</a>
-                </div>
-              </form>
-
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-md-6 col-lg-5">
+        <div class="card card-custom p-4 p-md-5">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold text-primary">Bem-vindo de volta</h2>
+                <p class="text-muted">Acesse sua conta para gerenciar suas anamneses.</p>
             </div>
-          </div>
 
+            <div class="d-grid gap-2 mb-4">
+                <a href="#" class="btn btn-outline-dark rounded-pill d-flex align-items-center justify-content-center py-2 shadow-sm">
+                    <i class="bi bi-google me-2 text-danger"></i> Entrar com Google
+                </a>
+                <a href="#" class="btn btn-outline-dark rounded-pill d-flex align-items-center justify-content-center py-2 shadow-sm">
+                    <i class="bi bi-apple me-2"></i> Entrar com Apple
+                </a>
+            </div>
+
+            <div class="position-relative mb-4">
+                <hr>
+                <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">OU</span>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label fw-medium">E-mail</label>
+                        <input type="email" class="form-control rounded-pill" name="username" placeholder="seu@email.com" required>
+                    </div>
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between">
+                            <label class="form-label fw-medium">Senha</label>
+                            <a href="#" class="text-info small text-decoration-none">Esqueceu a senha?</a>
+                        </div>
+                        <input type="password" class="form-control rounded-pill" name="password" placeholder="Sua senha" required>
+                    </div>
+
+                    <div class="col-12 mt-4">
+                        <button type="submit" class="btn btn-primary w-100 py-2 rounded-pill fw-bold shadow-sm">
+                            Entrar no Sistema
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="text-center mt-4">
+                <p class="small text-muted">Ainda não tem conta? <a href="{% url 'cadastro' %}" class="text-info fw-bold text-decoration-none">Cadastre-se grátis</a></p>
+            </div>
         </div>
-      </div>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-  {% endblock %}
-  </body>
-</html>
+<style>
+    /* Estilo adicional para os campos de input no foco */
+    .form-control:focus {
+        border-color: #0dcaf0;
+        box-shadow: 0 0 0 0.25rem rgba(13, 202, 240, 0.1);
+    }
+    /* Efeito de hover nos botões de SSO */
+    .btn-outline-dark:hover {
+        background-color: #f8f9fa;
+        color: #212529;
+        border-color: #212529;
+    }
+</style>
+{% endblock %}

@@ -1,11 +1,118 @@
 {% extends 'base.html' %}
 
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% block title %}MedTools - Gestão Médica Inteligente{% endblock %}
 
-</body>
-</html>
+{% block content %}
+<section class="text-center py-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h1 class="display-4 fw-bold mb-3">Sua Anamnese Digital de <span class="text-info">Alta Precisão</span></h1>
+            <p class="lead text-muted mb-4">
+                Padronize seus atendimentos com o roteiro pedagógico mais completo do mercado.
+                Segurança, agilidade e organização para o seu consultório em um só lugar.
+            </p>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a href="{% url 'cadastro' %}" class="btn btn-primary btn-lg px-5 rounded-pill shadow-sm">Começar Agora</a>
+                <a href="#planos" class="btn btn-outline-secondary btn-lg px-5 rounded-pill">Ver Planos</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="row g-4 mb-5 text-center">
+    <div class="col-md-4">
+        <div class="p-4 card-custom h-100">
+            <i class="bi bi-file-earmark-medical fs-1 text-info mb-3"></i>
+            <h4 class="fw-bold">Roteiro Completo</h4>
+            <p class="text-muted small">Identificação, IS, HMA e Antecedentes organizados conforme a literatura médica.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="p-4 card-custom h-100">
+            <i class="bi bi-shield-lock fs-1 text-info mb-3"></i>
+            <h4 class="fw-bold">Dados Isolados</h4>
+            <p class="text-muted small">Cada clínica possui sua própria base de dados (Multitenancy), garantindo sigilo total.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="p-4 card-custom h-100">
+            <i class="bi bi-cloud-check fs-1 text-info mb-3"></i>
+            <h4 class="fw-bold">Acesso em Nuvem</h4>
+            <p class="text-muted small">Acesse os prontuários de seus pacientes de qualquer lugar, com backup automático.</p>
+        </div>
+    </div>
+</section>
+
+<section id="planos" class="py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">Escolha o Plano Ideal</h2>
+        <p class="text-muted">Preços transparentes para médicos individuais ou clínicas completas.</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-4">
+            <div class="card card-custom h-100 border-0 p-4 text-center">
+                <div class="card-body">
+                    <h5 class="text-muted text-uppercase small fw-bold">Individual</h5>
+                    <h2 class="fw-bold my-3">R$ 99<span class="fs-6 text-muted">/mês</span></h2>
+                    <ul class="list-unstyled mb-4 text-start">
+                        <li class="mb-2"><i class="bi bi-check2 text-info me-2"></i> 1 Usuário Médico</li>
+                        <li class="mb-2"><i class="bi bi-check2 text-info me-2"></i> Anamneses Ilimitadas</li>
+                        <li class="mb-2"><i class="bi bi-check2 text-info me-2"></i> Suporte via E-mail</li>
+                        <li class="text-muted small"><i class="bi bi-x text-danger me-2"></i> Personalização de Logo</li>
+                    </ul>
+                    <a href="{% url 'cadastro' %}" class="btn btn-outline-primary w-100 rounded-pill py-2">Assinar Agora</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card card-custom h-100 border-primary border-2 p-4 text-center shadow">
+                <div class="card-body">
+                    <span class="badge bg-info text-dark mb-2">MAIS POPULAR</span>
+                    <h5 class="text-muted text-uppercase small fw-bold">Clínica Pro</h5>
+                    <h2 class="fw-bold my-3 text-primary">R$ 249<span class="fs-6 text-muted">/mês</span></h2>
+                    <ul class="list-unstyled mb-4 text-start">
+                        <li class="mb-2"><i class="bi bi-check2 text-info me-2"></i> Até 3 Usuários</li>
+                        <li class="mb-2"><i class="bi bi-check2 text-info me-2"></i> Agenda Integrada</li>
+                        <li class="mb-2"><i class="bi bi-check2 text-info me-2"></i> Suporte WhatsApp 24h</li>
+                        <li class="mb-2"><i class="bi bi-check2 text-info me-2"></i> Plataforma de Análises Clínicas</li>
+                    </ul>
+                    <a href="{% url 'cadastro' %}" class="btn btn-primary w-100 rounded-pill py-2 shadow-sm">Assinar Agora</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card card-custom h-100 border-0 p-4 text-center">
+                <div class="card-body">
+                    <h5 class="text-muted text-uppercase small fw-bold">Hospitalar</h5>
+                    <h2 class="fw-bold my-3">R$ 599<span class="fs-6 text-muted">/mês</span></h2>
+                    <ul class="list-unstyled mb-4 text-start">
+                        <li class="mb-2"><i class="bi bi-check2 text-info me-2"></i> Usuários Ilimitados</li>
+                        <li class="mb-2"><i class="bi bi-check2 text-info me-2"></i> API para Integração</li>
+                        <li class="mb-2"><i class="bi bi-check2 text-info me-2"></i> Plataforma de Análises Clínicas com IA</li>
+                        <li class="mb-2"><i class="bi bi-check2 text-info me-2"></i> Treinamento Presencial</li>
+                    </ul>
+                    <a href="{% url 'cadastro' %}" class="btn btn-outline-primary w-100 rounded-pill py-2">Falar com Consultor</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Estilização Extra para os Planos */
+    .card-custom {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 20px !important; /* Bordas bem arredondadas conforme solicitado */
+    }
+    .card-custom:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1) !important;
+    }
+    #planos .card-custom {
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+</style>
+{% endblock %}

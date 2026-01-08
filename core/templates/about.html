@@ -1,10 +1,78 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>About</title>
-</head>
-<body>
-<h1>About</h1>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Quem Somos - MedTools{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="text-center mb-5">
+            <h1 class="fw-bold display-5">Sobre o <span class="text-info">MedTools</span></h1>
+            <p class="lead text-muted">Transformamos o rigor acadêmico em agilidade clínica.</p>
+        </div>
+
+        <div class="card card-custom p-4 p-md-5 mb-5">
+            <div class="row align-items-center">
+                <div class="col-md-6 mb-4 mb-md-0">
+                    <h3 class="fw-bold mb-4">Nossa Missão</h3>
+                    <p class="text-muted">
+                        O MedTools nasceu da necessidade de organizar o fluxo de atendimento médico sem perder a profundidade técnica exigida pela semiologia clássica. 
+                    </p>
+                    <p class="text-muted">
+                        Nossa ferramenta foi desenvolvida com base em <strong>roteiros pedagógicos estruturados</strong>, garantindo que o médico percorra todas as etapas essenciais: desde a identificação precisa até o detalhamento minucioso da história da doença atual.
+                    </p>
+                </div>
+                <div class="col-md-6 text-center">
+                    <div class="bg-light p-5 rounded-circle d-inline-block">
+                        <i class="bi bi-mortarboard fs-1 text-info"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card card-custom h-100 p-4 text-center border-0">
+                    <i class="bi bi-journal-medical fs-2 text-primary mb-3"></i>
+                    <h5 class="fw-bold">Rigor Científico</h5>
+                    <p class="small text-muted">
+                        Implementamos o interrogatório sintomatológico completo, cobrindo desde o estado geral até sistemas específicos como o respiratório e cardiovascular.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-custom h-100 p-4 text-center border-0">
+                    <i class="bi bi-graph-up-arrow fs-2 text-primary mb-3"></i>
+                    <h5 class="fw-bold">Visão Integral</h5>
+                    <p class="small text-muted">
+                        Valorizamos a história psicossocial e os hábitos de vida, incluindo antecedentes fisiológicos e patológicos do paciente.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-custom h-100 p-4 text-center border-0">
+                    <i class="bi bi-clock-history fs-2 text-primary mb-3"></i>
+                    <h5 class="fw-bold">Agilidade Clínica</h5>
+                    <p class="small text-muted">
+                        Otimizamos o tempo de preenchimento sem sacrificar a qualidade do registro médico, permitindo foco total no paciente.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-primary text-white p-5 rounded-5 border-0 text-center shadow">
+            <h3 class="fw-bold mb-3">Pronto para elevar o nível dos seus prontuários?</h3>
+            <p class="mb-4">Junte-se a centenas de médicos e estudantes que utilizam o padrão MedTools.</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{% url 'cadastro' %}" class="btn btn-light btn-lg px-5 rounded-pill fw-bold">Criar Conta Agora</a>
+                <a href="{% url 'contato' %}" class="btn btn-outline-light btn-lg px-5 rounded-pill">Falar Conosco</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .rounded-5 { border-radius: 30px !important; }
+    .text-primary { color: #0d6efd !important; }
+    strong { color: #333; }
+</style>
+{% endblock %}
