@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Novo Exame Físico - MedTools{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card card-custom p-4 shadow-sm border-0">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-0 text-primary">Exame Físico Geral</h2>
+                    <p class="text-muted">Vinculado à Anamnese de: <strong>{{ anamnese.nome }}</strong></p>
+                </div>
+                <i class="bi bi-stethoscope fs-1 text-info"></i>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="bg-light p-4 rounded-4 mb-4">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Impressão Geral e Sinais Vitais</h5>
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label class="form-label fw-bold">Descrição do Exame (Sistemas)</label>
+                            <p class="small text-muted">Descreva a inspeção, palpação, percussão e ausculta realizada.</p>
+                            <textarea class="form-control" name="descricao_exame" rows="10">{% if exame %}{{ exame.descricao_exame }}{% endif %}</textarea>
+                            <h5 class="fw-bold mb-0 text-primary">
+                            {% if exame %}Editando Exame Físico{% else %}Novo Exame Físico{% endif %}
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary px-4 rounded-pill">Cancelar</a>
+                    <button type="submit" class="btn btn-primary px-5 rounded-pill fw-bold shadow-sm">Salvar Exame Físico</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

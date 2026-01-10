@@ -137,3 +137,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 #EMAIL_HOST_PASSWORD 'sua senha'
 #EMAIL_PORT= 587
 #EMAIL_USE_TLS = True
+
+# No final do settings.py
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'dashboard' # Para onde o usuário vai após logar
