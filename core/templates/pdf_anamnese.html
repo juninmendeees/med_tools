@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+            @bottom-right {
+                content: "Página " counter(page) " de " counter(pages);
+                font-size: 9pt;
+            }
+        }
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            color: #333;
+            line-height: 1.5;
+            font-size: 11pt;
+        }
+        .header {
+            border-bottom: 2px solid #0d6efd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .title {
+            color: #0d6efd;
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: 18pt;
+            margin: 0;
+        }
+        .section-title {
+            background-color: #f8f9fa;
+            border-left: 4px solid #0d6efd;
+            padding: 5px 10px;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-size: 12pt;
+        }
+        .row { display: block; margin-bottom: 5px; }
+        .label { font-weight: bold; color: #555; }
+        .content { margin-bottom: 15px; text-align: justify; }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 9pt;
+            color: #777;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div>
+            <h1 class="title">MedTools</h1>
+            <small>Relatório de Anamnese Médica</small>
+        </div>
+        <div style="text-align: right;">
+            <strong>Data do Registro:</strong> {{ anamnese.data_criacao|date:"d/m/Y H:i" }}
+        </div>
+    </div>
+
+    <div class="section-title">Identificação do Paciente</div>
+    <div class="row"><span class="label">Nome:</span> {{ anamnese.nome }}</div>
+    <div class="row">
+        <span class="label">Idade:</span> {{ anamnese.idade }} anos |
+        <span class="label">Estado Civil:</span> {{ anamnese.estado_civil }} |
+        <span class="label">Profissão:</span> {{ anamnese.profissao }}
+    </div>
+    <div class="row"><span class="label">Plano de Saúde:</span> {{ anamnese.plano_saude|default:"Não informado" }}</div>
+
+    <div class="section-title">Queixa Principal (QP)</div>
+    <div class="content">{{ anamnese.queixa_principal }}</div>
+
+    <div class="section-title">História da Moléstia Atual (HMA)</div>
+    <div class="content">{{ anamnese.hma }}</div>
+
+    <div class="section-title">Interrogatório Sistemático (IS)</div>
+    <div class="row"><span class="label">Geral:</span> {{ anamnese.is_geral|default:"Nada digno de nota" }}</div>
+    <div class="row"><span class="label">Cardiovascular:</span> {{ anamnese.is_cardiovascular|default:"Nada digno de nota" }}</div>
+    <div class="row"><span class="label">Respiratório:</span> {{ anamnese.is_respiratorio|default:"Nada digno de nota" }}</div>
+
+    <div class="section-title">Antecedentes Pessoais e Familiares</div>
+    <div class="content">
+        <strong>Alergias:</strong> {{ anamnese.alergias|default:"Negativas" }} <br>
+        <strong>Drogas/Medicamentos:</strong> {{ anamnese.medicamentos|default:"Nenhum" }} <br>
+        <strong>Histórico Familiar:</strong> {{ anamnese.antecedentes_familiares|default:"Sem particularidades" }}
+    </div>
+
+    <div class="section-title">Exames Físicos Realizados</div>
+        {% for exame in exames %}
+    <div style="margin-bottom: 10px; border-bottom: 1px dashed #ccc; padding-bottom: 5px;">
+        <strong>Data: {{ exame.data_exame|date:"d/m/Y H:i" }}</strong><br>
+        {{ exame.descricao_exame|linebreaks }}
+    </div>
+{% empty %}
+    <p class="text-muted">Nenhum exame físico registrado até o momento.</p>
+{% endfor %}
+
+    <div class="footer">
+        Documento gerado eletronicamente por {{ request.user.get_full_name|default:request.user.username }} via MedTools.
+    </div>
+
+</body>
+</html>
