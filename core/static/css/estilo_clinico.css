@@ -1,0 +1,99 @@
+/* static/css/estilo_clinico.css */
+
+/* --- VARIÁVEIS GLOBAIS --- */
+:root {
+    --medtools-blue: #0dcaf0;
+    --medtools-dark: #333333;
+    --bg-light: #f8f9fa;
+    --navbar-height: 90px;
+    --sidebar-width: 260px;
+}
+
+/* --- ESTILOS BASE --- */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-light);
+    color: #444;
+    overflow-x: hidden;
+}
+
+/* --- NAVBAR --- */
+.navbar {
+    min-height: var(--navbar-height);
+    background-color: #ffffff;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    z-index: 1100;
+}
+
+.logo-container { display: flex; align-items: center; text-decoration: none; transition: opacity 0.2s; }
+.logo-container:hover { opacity: 0.8; }
+.logo-icon { font-size: 2.2rem; color: var(--medtools-blue); margin-right: 12px; }
+.logo-text { font-weight: 700; font-size: 1.6rem; color: var(--medtools-dark); letter-spacing: -0.8px; }
+.logo-text span { color: var(--medtools-blue); }
+
+.nav-link {
+    color: #555 !important;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+.nav-link:hover { color: var(--medtools-blue) !important; }
+
+/* --- CONTEÚDO PRINCIPAL (PÁGINAS PÚBLICAS) --- */
+.main-content {
+    min-height: calc(100vh - 160px);
+    padding-top: 60px;
+    padding-bottom: 60px;
+}
+
+/* --- CARDS E EFEITOS (O QUE TINHA SUMIDO) --- */
+.card-custom {
+    border: none !important;
+    border-radius: 20px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.04) !important;
+    background-color: #fff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-custom:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1) !important;
+}
+
+/* --- SIDEBAR LOGADA --- */
+.sidebar {
+    width: var(--sidebar-width);
+    height: calc(100vh - var(--navbar-height));
+    background: #ffffff;
+    position: fixed;
+    top: var(--navbar-height);
+    left: 0;
+    border-right: 1px solid #e9ecef;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.main-wrapper-logado {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    padding: 30px;
+    min-height: calc(100vh - var(--navbar-height));
+}
+
+.nav-menu { padding: 15px; flex-grow: 1; }
+.section-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: #adb5bd; margin: 20px 0 10px 10px; }
+.nav-item { display: flex; align-items: center; padding: 10px 15px; color: #495057; text-decoration: none; border-radius: 8px; margin-bottom: 4px; }
+.nav-item:hover { background: #f0f7ff; color: #0d6efd; }
+.nav-item.active { background: #0d6efd; color: #fff !important; }
+.nav-item i { margin-right: 12px; font-size: 1.2rem; }
+
+/* --- ESCALA DE DOR --- */
+#id_intensidade.form-range::-webkit-slider-runnable-track { background: #adb5bd !important; height: 6px; }
+#id_intensidade.form-range::-webkit-slider-thumb { background: #dc3545 !important; margin-top: -6px; }
+
+/* --- FOOTER --- */
+footer {
+    background-color: #fff;
+    border-top: 1px solid #eee;
+    padding: 2rem 0;
+}

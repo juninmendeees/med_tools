@@ -1,8 +1,8 @@
-{% extends 'base.html' %}
+{% extends 'base_logado.html' %}
 
 {% block title %}Anamnese Completa - MedTools{% endblock %}
 
-{% block content %}
+{% block content_logado %}
 <div class="row justify-content-center">
     <div class="col-lg-11">
         <div class="card card-custom p-4">
@@ -162,38 +162,31 @@
         </div>
 
         <div class="col-12">
-            <h5 class="text-danger border-bottom pb-2 fw-bold"><i class="bi bi-exclamation-triangle me-2"></i>Antecedentes Patológicos</h5>
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <label class="form-label fw-bold small">Doenças da Infância</label>
-                    <p class="text-muted mb-1" style="font-size: 0.75rem;">Sarampo, varicela, caxumba, amigdalites, etc. </p>
-                    <input type="text" class="form-control" name="doencas_infancia" value="{{ anamnese.doencas_infancia|default:'' }}">
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label fw-bold small">Traumas e Acidentes</label>
-                    <input type="text" class="form-control" name="traumas" value="{{ anamnese.traumas|default:'' }}">
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label fw-bold small">Alergias</label>
-                    <input type="text" class="form-control border-danger" name="alergias" value="{{ anamnese.alergias|default:'' }}">
-                </div>
-                <div class="col-md-12">
-                    <label class="form-label fw-bold small">Doenças Graves e/ou Crônicas</label>
-                    <p class="text-muted mb-1" style="font-size: 0.75rem;">HAS, diabetes, hepatite, malária, artrose, litíase, gota, pneumonia, osteoporose. </p>
-                    <textarea class="form-control" name="doencas_cronicas" rows="2">{{ anamnese.doencas_cronicas|default:'' }}</textarea>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-bold small">Cirurgias e Transfusões</label>
-                    <p class="text-muted mb-1" style="font-size: 0.75rem;">Nº, quando, onde e motivo.</p>
-                    <textarea class="form-control" name="cirurgias_transfusoes" rows="2">{{ anamnese.cirurgias_transfusoes|default:'' }}</textarea>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-bold small">Medicamentos em uso atual</label>
-                    <p class="text-muted mb-1" style="font-size: 0.75rem;">Qual, posologia, motivo e quem prescreveu. </p>
-                    <textarea class="form-control border-warning" name="medicamentos" rows="2">{{ anamnese.medicamentos|default:'' }}</textarea>
-                </div>
+    <h5 class="text-danger border-bottom pb-2 fw-bold"><i class="bi bi-exclamation-triangle me-2"></i>Antecedentes Patológicos</h5>
+    <div class="row g-3 align-items-start"> <div class="col-md-4">
+            <div class="d-flex flex-column h-100">
+                <label class="form-label fw-bold small mb-1">Doenças da Infância</label>
+                <p class="text-muted mb-2" style="font-size: 0.75rem; min-height: 1rem;">Sarampo, varicela, caxumba, amigdalites, etc.</p>
+                <input type="text" class="form-control mt-auto" name="doencas_infancia" value="{{ anamnese.doencas_infancia|default:'' }}">
             </div>
         </div>
+
+        <div class="col-md-4">
+            <div class="d-flex flex-column h-100">
+                <label class="form-label fw-bold small mb-1">Traumas e Acidentes</label>
+                <p class="text-muted mb-2" style="font-size: 0.75rem; min-height: 1rem;">&nbsp;</p> <input type="text" class="form-control mt-auto" name="traumas" value="{{ anamnese.traumas|default:'' }}">
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="d-flex flex-column h-100">
+                <label class="form-label fw-bold small mb-1">Alergias</label>
+                <p class="text-muted mb-2" style="font-size: 0.75rem; min-height: 1rem;">&nbsp;</p> <input type="text" class="form-control border-danger mt-auto" name="alergias" value="{{ anamnese.alergias|default:'' }}">
+            </div>
+        </div>
+
+    </div>
+</div>
 
         <div class="col-12">
             <div class="row g-3">

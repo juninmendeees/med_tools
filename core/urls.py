@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import index, about, cadastro, login, cadastro_anamnese, contato, dashboard, consulta_anamnese, \
-    cadastro_exame_fisico, excluir_anamnese, gerenciar_exames, excluir_exame_fisico, gerar_pdf_anamnese
+    cadastro_exame_fisico, excluir_anamnese, gerenciar_exames, excluir_exame_fisico, gerar_pdf_anamnese, \
+    gerar_pdf_exame_individual
 
 urlpatterns = [
     path('',index, name='index'),
@@ -15,7 +16,11 @@ urlpatterns = [
     path('excluir_anamnese/<int:pk>/', excluir_anamnese, name='excluir_anamnese'),
     path('anamnese/<int:anamnese_id>/exames/', gerenciar_exames, name='gerenciar_exames'),
     path('exame-fisico/excluir/<int:pk>/', excluir_exame_fisico, name='excluir_exame_fisico'),
+    path('exame-fisico/pdf/<int:exame_id>/',gerar_pdf_exame_individual, name='gerar_pdf_exame_individual'),
     path('contato',contato, name='contato'),
     path('dashboard',dashboard, name='dashboard'),
     path('anamnese/pdf/<int:pk>/', gerar_pdf_anamnese, name='gerar_pdf_anamnese'),
+
+
+
 ]

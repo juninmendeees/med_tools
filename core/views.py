@@ -9,6 +9,14 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from weasyprint import HTML
 import tempfile
+from django.utils import timezone
+import io
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+from django.utils import timezone
+from django.shortcuts import get_object_or_404
+from .models import Anamnese, ExameFisico
 
 
 
@@ -115,33 +123,124 @@ def contato(request):
     return render(request, 'contato.html', context)
 
 
-def cadastro_exame_fisico(request, pk=None):
-    # Se houver pk, estamos editando. Caso contrário, novo exame.
-    exame = get_object_or_404(ExameFisico, pk=pk) if pk else None
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import Anamnese, ExameFisico
 
-    # Se for novo, precisamos saber a qual anamnese ele pertence via URL (?vinculo=ID)
-    anamnese_id = request.GET.get('vinculo')
-    anamnese = get_object_or_404(Anamnese, id=anamnese_id) if anamnese_id else (exame.anamnese if exame else None)
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import Anamnese, ExameFisico
+
+
+def cadastro_exame_fisico(request, pk=None):
+    # Lógica de Inicialização: Edição ou Novo Registro
+    if pk:
+        exame = get_object_or_404(ExameFisico, pk=pk)
+        anamnese = exame.anamnese
+    else:
+        exame = None
+        anamnese_id = request.GET.get('vinculo')
+        if not anamnese_id:
+            messages.error(request, "Vínculo de anamnese não encontrado.")
+            return redirect('consulta_anamnese')
+        anamnese = get_object_or_404(Anamnese, id=anamnese_id)
 
     if request.method == 'POST':
-        descricao = request.POST.get('descricao_exame')
+        tipo = request.POST.get('tipo_exame')
 
-        if exame:
-            exame.descricao_exame = descricao
-            exame.save()
+        if not exame:
+            exame = ExameFisico(anamnese=anamnese)
+
+        exame.tipo_exame = tipo
+
+        # --- 1. SE FOR EXAME GERAL ---
+        if tipo == 'geral':
+            exame.estado_geral = request.POST.get('eg_estado')
+            exame.nivel_consciencia = request.POST.get('eg_consciencia')
+            exame.hidratacao = request.POST.get('eg_hidratacao')
+            exame.mucosas = request.POST.get('eg_mucosas')
+            exame.pele_anexos = request.POST.get('eg_pele_anexos')
+            exame.movimentos_involuntarios = request.POST.get('eg_mov_inv')
+            exame.desenvolvimento_fisico = request.POST.get('eg_desenv')
+            exame.estado_nutricional = request.POST.get('eg_nutricional')
+            exame.musculatura = request.POST.get('eg_musculatura')
+            exame.veias_superficiais = request.POST.get('eg_veias')
+            exame.veias_obs = request.POST.get('eg_veias_obs')
+            exame.circulacao_colateral = request.POST.get('eg_circ_colat')
+            exame.edema = request.POST.get('eg_edema')
+            exame.fala_linguagem = request.POST.get('eg_fala')
+            exame.marcha = request.POST.get('eg_marcha')
+
+            # Tratamento de decimais
+            exame.peso = request.POST.get('eg_peso', '').replace(',', '.') or None
+            exame.altura = request.POST.get('eg_altura') or None
+            exame.imc = request.POST.get('eg_imc', '').replace(',', '.') or None
+            exame.temperatura = request.POST.get('eg_temp', '').replace(',', '.') or None
+
+        # --- 2. SE FOR AVALIAÇÃO NUTRICIONAL (PORTO) ---
+        elif tipo == 'nutricional':
+            exame.peso_habitual = request.POST.get('peso_habitual', '').replace(',', '.') or None
+            exame.perdeu_peso_6_meses = request.POST.get('perdeu_peso_6_meses')
+            exame.quantidade_perdida_kg = request.POST.get('quantidade_perdida_kg', '').replace(',', '.') or None
+
+            perc = request.POST.get('percentual_perda', '').replace('%', '').replace(',', '.')
+            exame.percentual_perda = perc if perc else None
+
+            exame.ingestao_alimentar = request.POST.get('ingestao_alimentar')
+            exame.dieta_tipo = request.POST.get('dieta_tipo')
+            exame.demanda_metabolica = request.POST.get('demanda_metabolica')
+            exame.perda_gordura_subcutanea = request.POST.get('perda_gordura_subcutanea') or 0
+            exame.perda_muscular = request.POST.get('perda_muscular') or 0
+            exame.ascite = request.POST.get('ascite') or 0
+            exame.classificacao_nutricional = request.POST.get('classificacao_nutricional')
+
+        # --- 3. SE FOR SINTOMA DOR (NOVO) ---
+        elif tipo == 'dor':
+            exame.localizacao_dor = request.POST.get('localizacao_dor')
+            exame.intensidade_dor = request.POST.get('intensidade_dor')
+            exame.qualidade_carater = request.POST.get('qualidade_carater')
+            exame.duracao_dor = request.POST.get('duracao_dor')
+            exame.frequencia_dor = request.POST.get('frequencia_dor')
+            exame.irradiacao_dor = request.POST.get('irradiacao_dor')
+            exame.fatores_agravantes = request.POST.get('fatores_agravantes')
+            exame.fatores_atenuantes = request.POST.get('fatores_atenuantes')
+            exame.sintomas_associados_dor = request.POST.get('sintomas_associados_dor')
+
+        # --- 4. SE FOR PRESSÃO ARTERIAL (PORTO) ---
+        elif tipo == 'pressao_arterial':
+            # Identificação básica [cite: 33]
+            exame.tipo_esfigmomanometro = request.POST.get('tipo_esfigmomanometro')  # [cite: 35]
+
+            # Avaliação de rotina (Sentado/Deitado) [cite: 37, 38]
+            exame.pa_sentado_sistolica = request.POST.get('pa_sentado_sistolica')
+            exame.pa_sentado_diastolica = request.POST.get('pa_sentado_diastolica')
+
+            # Pesquisa de Hipotensão Ortostática [cite: 41]
+            # Deitado (mínimo 5 min) [cite: 42, 43, 44]
+            exame.pa_deitado_sistolica = request.POST.get('pa_deitado_sistolica')
+            exame.pa_deitado_diastolica = request.POST.get('pa_deitado_diastolica')
+            exame.fc_deitado = request.POST.get('fc_deitado')
+
+            # De pé (após 1 a 3 min) [cite: 39, 45, 46, 47]
+            exame.pa_em_pe_sistolica = request.POST.get('pa_em_pe_sistolica')
+            exame.pa_em_pe_diastolica = request.POST.get('pa_em_pe_diastolica')
+            exame.fc_em_pe = request.POST.get('fc_em_pe')
+
+        # --- PARA OUTROS TIPOS / DESCRIÇÃO LIVRE ---
         else:
-            ExameFisico.objects.create(
-                anamnese=anamnese,
-                descricao_exame=descricao
-            )
+            exame.descricao_exame = request.POST.get('descricao_exame')
 
+        exame.save()
+        messages.success(request, "Registro clínico atualizado com sucesso!")
         return redirect('gerenciar_exames', anamnese_id=anamnese.id)
 
     return render(request, 'cadastro_exame_fisico.html', {
         'exame': exame,
-        'anamnese': anamnese
+        'anamnese': anamnese,
+        'tipos_opcoes': ExameFisico.TIPOS_EXAME
     })
 
+    return render(request, 'cadastro_exame_fisico.html', context)
 def gerenciar_exames(request, anamnese_id):
     anamnese = get_object_or_404(Anamnese, id=anamnese_id)
     exames = anamnese.exames_fisicos.all()
@@ -156,26 +255,60 @@ def excluir_exame_fisico(request, pk):
     return redirect('gerenciar_exames', anamnese_id=anamnese_id)
 
 
+def render_to_pdf(template_src, context_dict={}):
+    # Renderiza o HTML como string
+    html_string = render_to_string(template_src, context_dict)
+
+    # Cria o PDF
+    html = HTML(string=html_string, base_url=None)  # base_url ajuda a encontrar imagens/css
+    result = html.write_pdf()
+
+    # Retorna o Response
+    response = HttpResponse(result, content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; filename="relatorio.pdf"'
+    return response
+
+
 def gerar_pdf_anamnese(request, pk):
     anamnese = get_object_or_404(Anamnese, pk=pk)
+    exames_vinculados = anamnese.exames_fisicos.all().order_by('-data_exame')
 
-    # Buscamos também os exames físicos vinculados para o relatório completo
-    exames = anamnese.exames_fisicos.all()
+    context = {
+        'anamnese': anamnese,
+        'exames': exames_vinculados,
+        'data_impressao': timezone.now(),
+        'usuario_nome': request.user.get_full_name() or request.user.username, # Passa o nome aqui
+    }
+    return render_to_pdf('pdf_anamnese.html', context)
 
-    # Passamos o request no contexto para o template conseguir ler 'request.user'
+def gerar_pdf_exame_individual(request, exame_id):
+    exame = get_object_or_404(ExameFisico, id=exame_id)
+    context = {
+        'anamnese': exame.anamnese,
+        'exames': [exame],
+        'data_impressao': timezone.now(),
+        'usuario_nome': request.user.get_full_name() or request.user.username, # Passa o nome aqui
+    }
+    return render_to_pdf('pdf_anamnese.html', context)
+
+
+
+def gerar_pdf_exames_lista(request, anamnese_id, exame_id=None):
+    anamnese = get_object_or_404(Anamnese, id=anamnese_id)
+
+    if exame_id:
+        # Imprime apenas um exame específico
+        exames = ExameFisico.objects.filter(id=exame_id)
+    else:
+        # Imprime todos os exames daquela anamnese
+        exames = anamnese.exames_fisicos.all().order_by('-data_exame')
+
     context = {
         'anamnese': anamnese,
         'exames': exames,
-        'request': request,  # <--- Esta linha resolve o erro
+        'data_impressao': timezone.now()
     }
+    return render_to_pdf('pdf_exames.html', context)
 
-    html_string = render_to_string('pdf_anamnese.html', context)
 
-    # Geramos o PDF
-    html = HTML(string=html_string, base_url=request.build_absolute_uri())
-    pdf = html.write_pdf()
 
-    response = HttpResponse(pdf, content_type='application/pdf')
-    response['Content-Disposition'] = f'inline; filename="anamnese_{anamnese.nome}.pdf"'
-
-    return response

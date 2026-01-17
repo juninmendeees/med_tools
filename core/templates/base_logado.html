@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body_structure %}
+<div class="d-flex">
+    <aside class="sidebar shadow-sm">
+        <nav class="nav-menu">
+            <div class="section-label">Principal</div>
+            <a href="{% url 'dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                <i class="bi bi-grid-1x2-fill"></i> Dashboard
+            </a>
+
+            <div class="section-label">Clínica</div>
+            <a href="{% url 'consulta_anamnese' %}" class="nav-item {% if 'anamnese' in request.path %}active{% endif %}">
+                <i class="bi bi-file-earmark-medical"></i> Consultar Anamnese
+            </a>
+            <a href="{% url 'cadastro_exame_fisico' %}" class="nav-item {% if 'exame-fisico' in request.path %}active{% endif %}">
+                <i class="bi bi-activity"></i> Exames Físicos
+            </a>
+
+            <div class="section-label">Educação</div>
+            <a href="#" class="nav-item"><i class="bi bi-layers"></i> Flashcards</a>
+            <a href="#" class="nav-item"><i class="bi bi-diagram-3"></i> Mapas Mentais</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <hr>
+            <a href="#" class="nav-item text-danger">
+                <i class="bi bi-box-arrow-left"></i> Sair
+            </a>
+        </div>
+    </aside>
+
+    <main class="main-wrapper-logado">
+        {% block content_logado %}{% endblock %}
+    </main>
+</div>
+{% endblock %}

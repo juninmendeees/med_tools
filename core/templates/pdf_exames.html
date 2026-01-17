@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page { size: A4; margin: 2cm; }
+        body { font-family: Arial, sans-serif; color: #333; font-size: 11pt; }
+        .exame-box {
+            margin-bottom: 25px;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            page-break-inside: avoid;
+        }
+        .exame-header {
+            background-color: #f1f7ff;
+            padding: 8px 12px;
+            margin: -15px -15px 15px -15px;
+            border-bottom: 1px solid #dee2e6;
+            color: #0d6efd;
+            font-weight: bold;
+            border-radius: 8px 8px 0 0;
+        }
+        .label { font-weight: bold; color: #555; }
+        .row { margin-bottom: 6px; }
+        .nutri-final {
+            margin-top: 10px;
+            padding: 8px;
+            background-color: #e9f7ef;
+            border: 1px solid #c3e6cb;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div style="text-align: center; margin-bottom: 20px;">
+        <h2 style="color: #0d6efd; margin-bottom: 0;">Registro de Exame Clínico</h2>
+        <small>Paciente: {{ anamnese.nome }} | Data: {{ data_impressao|date:"d/m/Y H:i" }}</small>
+    </div>
+
+    {% for exame in exames %}
+        <div class="exame-box">
+            <div class="exame-header">
+                {{ exame.get_tipo_exame_display }} — {{ exame.data_exame|date:"d/m/Y H:i" }}
+            </div>
+
+            {% if exame.tipo_exame == 'geral' %}
+                <div class="row"><span class="label">Estado Geral:</span> {{ exame.estado_geral }} | <span class="label">Consciência:</span> {{ exame.nivel_consciencia }}</div>
+                <div class="row"><span class="label">Antropometria:</span> {{ exame.peso }}kg | {{ exame.altura }}cm | IMC: {{ exame.imc }}</div>
+                <div class="row"><span class="label">Pele/Fâneros:</span> {{ exame.pele_anexos }}</div>
+                <div class="row"><span class="label">Edema:</span> {{ exame.edema|default:"Ausente" }}</div>
+
+            {% elif exame.tipo_exame == 'nutricional' %}
+                <div class="row"><span class="label">Peso Habitual:</span> {{ exame.peso_habitual }}kg | <span class="label">Perda 6 meses:</span> {{ exame.get_perdeu_peso_6_meses_display }}</div>
+                <div class="row"><span class="label">Qtd Perdida:</span> {{ exame.quantidade_perdida_kg }}kg ({{ exame.percentual_perda }}%)</div>
+                <div class="row"><span class="label">Ingestão:</span> {{ exame.get_ingestao_alimentar_display }} | <span class="label">Dieta:</span> {{ exame.get_dieta_tipo_display }}</div>
+                <div class="row"><span class="label">Sinais Físicos (0-3):</span> Gordura: {{ exame.perda_gordura_subcutanea }} | Muscular: {{ exame.perda_muscular }} | Ascite: {{ exame.ascite }}</div>
+                <div class="nutri-final"><span class="label">CLASSIFICAÇÃO SUBJETIVA:</span> {{ exame.get_classificacao_nutricional_display|upper }}</div>
+
+            {% else %}
+                <div style="white-space: pre-wrap;">{{ exame.descricao_exame }}</div>
+            {% endif %}
+        </div>
+    {% endfor %}
+</body>
+</html>

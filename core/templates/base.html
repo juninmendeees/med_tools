@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -6,91 +7,11 @@
     <title>{% block title %}MedTools - Sistema Médico{% endblock %}</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <style>
-        :root {
-            --medtools-blue: #0dcaf0; /* Azul Claro / Cyan */
-            --medtools-dark: #333333;
-            --bg-light: #f8f9fa;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-light);
-            color: #444;
-        }
-
-        /* Ajuste da altura do Cabeçalho (90px total) */
-        .navbar {
-            min-height: 90px;
-            background-color: #ffffff;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
-            padding: 0.5rem 0;
-        }
-
-        /* Estilização da Logo MedTools */
-        .logo-container {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            transition: opacity 0.2s;
-        }
-        .logo-container:hover {
-            opacity: 0.8;
-        }
-        .logo-icon {
-            font-size: 2.2rem;
-            color: var(--medtools-blue);
-            margin-right: 12px;
-            line-height: 1;
-        }
-        .logo-text {
-            font-weight: 700;
-            font-size: 1.6rem;
-            color: var(--medtools-dark);
-            letter-spacing: -0.8px;
-            line-height: 1;
-        }
-        .logo-text span {
-            color: var(--medtools-blue);
-        }
-
-        /* Conteúdo Principal */
-        .main-content {
-            /* 100vh - (Navbar 90px + Footer ~70px) */
-            min-height: calc(100vh - 160px);
-            padding-top: 40px;
-            padding-bottom: 40px;
-        }
-
-        /* Estilos de Cartão Global (para Anamneses e Login) */
-        .card-custom {
-            border: none;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
-            background-color: #fff;
-        }
-
-        .nav-link {
-            color: #555;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-        .nav-link:hover {
-            color: var(--medtools-blue);
-        }
-
-        footer {
-            background-color: #fff;
-            border-top: 1px solid #eee;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/estilo_clinico.css' %}">
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
@@ -98,25 +19,15 @@
                 <i class="bi bi-intersect logo-icon"></i>
                 <span class="logo-text">Med<span>Tools</span></span>
             </a>
-
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link px-3" href="http://127.0.0.1:8000/">INICIO</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3" href="about">QUEM SOMOS</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3" href="#">FAQ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3" href="contato">CONTATO</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link px-3" href="/">INÍCIO</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="/about">QUEM SOMOS</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#">FAQ</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="/contato">CONTATO</a></li>
                     <li class="nav-item ms-lg-3">
                         <a class="btn btn-outline-primary rounded-pill px-4 fw-medium" href="{% url 'login' %}">LOGIN</a>
                     </li>
@@ -125,24 +36,19 @@
         </div>
     </nav>
 
+    {% block body_structure %}
     <main class="container main-content">
-        {% block content %}
-        <div class="text-center py-5">
-            <h1 class="display-5 fw-bold">Bem-vindo ao MedTools</h1>
-            <p class="lead">Gestão Médica Inteligente.</p>
-        </div>
-        {% endblock %}
+        {% block content %}{% endblock %}
     </main>
+    {% endblock %}
 
-    <footer class="py-4 mt-auto">
+    <footer class="mt-auto">
         <div class="container text-center text-muted">
             <small>&copy; 2025 MedTools - Gestão Médica Inteligente. Todos os direitos reservados.</small>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    {% block scripts %}
-    {% endblock %}
+    {% block scripts %}{% endblock %}
 </body>
 </html>

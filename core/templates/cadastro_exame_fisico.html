@@ -1,41 +1,375 @@
-{% extends 'base.html' %}
+{% extends 'base_logado.html' %}
+{% block content_logado %}
+{% load l10n %}
 
-{% block title %}Novo Exame Físico - MedTools{% endblock %}
 
-{% block content %}
-<div class="row justify-content-center">
-    <div class="col-lg-10">
-        <div class="card card-custom p-4 shadow-sm border-0">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h2 class="fw-bold mb-0 text-primary">Exame Físico Geral</h2>
-                    <p class="text-muted">Vinculado à Anamnese de: <strong>{{ anamnese.nome }}</strong></p>
-                </div>
-                <i class="bi bi-stethoscope fs-1 text-info"></i>
-            </div>
-
-            <form method="POST">
-                {% csrf_token %}
-                <div class="bg-light p-4 rounded-4 mb-4">
-                    <h5 class="fw-bold mb-3 border-bottom pb-2">Impressão Geral e Sinais Vitais</h5>
-                    <div class="row g-3">
-                        <div class="col-md-12">
-                            <label class="form-label fw-bold">Descrição do Exame (Sistemas)</label>
-                            <p class="small text-muted">Descreva a inspeção, palpação, percussão e ausculta realizada.</p>
-                            <textarea class="form-control" name="descricao_exame" rows="10">{% if exame %}{{ exame.descricao_exame }}{% endif %}</textarea>
-                            <h5 class="fw-bold mb-0 text-primary">
-                            {% if exame %}Editando Exame Físico{% else %}Novo Exame Físico{% endif %}
-                            </h5>
-                        </div>
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-11">
+            <div class="card card-custom p-4 shadow-sm border-0">
+                <div class="d-flex align-items-center mb-4">
+                    <a href="{% url 'gerenciar_exames' anamnese.id %}" class="btn btn-light rounded-circle me-3"><i
+                            class="bi bi-arrow-left"></i></a>
+                    <div>
+                        <h2 class="fw-bold text-primary mb-0">{% if exame %}Editar{% else %}Novo{% endif %} Exame
+                            Físico</h2>
+                        <p class="text-muted mb-0">Paciente: <strong>{{ anamnese.nome }}</strong></p>
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-end gap-2">
-                    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary px-4 rounded-pill">Cancelar</a>
-                    <button type="submit" class="btn btn-primary px-5 rounded-pill fw-bold shadow-sm">Salvar Exame Físico</button>
-                </div>
-            </form>
+                <form method="POST" id="formExame">
+                    {% csrf_token %}
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Tipo de Exame</label>
+                        <select class="form-select form-select-lg border-primary" name="tipo_exame" id="tipo_exame"
+                                onchange="alternarCampos()">
+                            {% for valor, label in tipos_opcoes %}
+                            <option value="{{ valor }}" {% if exame.tipo_exame == valor %}selected{% elif not exame and
+                                    valor==
+                            'geral' %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div id="form-container" class="p-4 rounded-4 mb-4 border bg-light shadow-sm">
+
+                        <div id="campos-geral" class="secao-exame">
+                            <h5 class="text-primary border-bottom pb-2 mb-3">Exame Físico Geral</h5>
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Estado Geral</label>
+                                    <select class="form-select" name="eg_estado">
+                                        <option value="BEG" {% if exame.estado_geral == 'BEG' %}selected{% endif %}>BEG</option>
+                                        <option value="REG" {% if exame.estado_geral == 'REG' %}selected{% endif %}>REG</option>
+                                        <option value="MEG" {% if exame.estado_geral == 'MEG' %}selected{% endif %}>MEG</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Nível de Consciência</label>
+                                    <input type="text" class="form-control" name="eg_consciencia"
+                                           value="{{ exame.nivel_consciencia|default:'' }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Hidratação</label>
+                                    <select class="form-select" name="eg_hidratacao">
+                                        <option value="hidratado" {% if exame.hidratacao == 'hidratado' %}selected{% endif %}>Hidratado</option>
+                                        <option value="desidratado" {% if exame.hidratacao == 'desidratado' %}selected{% endif %}>Desidratado</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Mucosas</label>
+                                    <select class="form-select" name="eg_mucosas">
+                                        <option value="coradas" {% if exame.mucosas == 'coradas' %}selected{% endif %}>Coradas</option>
+                                        <option value="hipocoradas" {% if exame.mucosas == 'hipocoradas' %}selected{% endif %}>Hipocoradas</option>
+                                        <option value="hipercoradas" {% if exame.mucosas == 'hipercoradas' %}selected{% endif %}>Hipercoradas</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label small fw-bold">Pele e Fâneros (Cor, umidade, textura,
+                                        turgor, elasticidade, sensibilidade, lesões)</label>
+                                    <textarea class="form-control" name="eg_pele_anexos" rows="2">{{ exame.pele_anexos|default:'' }}</textarea>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Movimentos Involuntários</label>
+                                    <select class="form-select" name="eg_mov_inv">
+                                        <option value="ausentes" {% if exame.movimentos_involuntarios == 'ausentes' %}selected{% endif %}>Ausentes</option>
+                                        <option value="presentes" {% if exame.movimentos_involuntarios == 'presentes' %}selected{% endif %}>Presentes</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold">Peso (kg)</label>
+                                    <input type="number" step="0.1" class="form-control" name="eg_peso" id="id_peso"
+                                           value="{{ exame.peso|unlocalize }}">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold">Altura (cm)</label>
+                                    <input type="number" class="form-control" name="eg_altura" id="id_altura"
+                                           value="{{ exame.altura|default:'' }}">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold">IMC</label>
+                                    <input type="text" class="form-control bg-light" name="eg_imc" id="id_imc"
+                                           value="{{ exame.imc|unlocalize }}" readonly>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Desenvolvimento Físico</label>
+                                    <select class="form-select" name="eg_desenv">
+                                        <option value="normal" {% if exame.desenvolvimento_fisico == 'normal' %}selected{% endif %}>Normal</option>
+                                        <option value="nanismo" {% if exame.desenvolvimento_fisico == 'nanismo' %}selected{% endif %}>Nanismo</option>
+                                        <option value="gigantismo" {% if exame.desenvolvimento_fisico == 'gigantismo' %}selected{% endif %}>Gigantismo</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">Musculatura (tônus e trofismo)</label>
+                                    <input type="text" class="form-control" name="eg_musculatura"
+                                           value="{{ exame.musculatura|default:'' }}" placeholder="Tônus e trofismo">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Estado Nutricional</label>
+                                    <select class="form-select" name="eg_nutricional">
+                                        <option value="nutrido" {% if exame.estado_nutricional == 'nutrido' %}selected{% endif %}>Nutrido</option>
+                                        <option value="desnutrido" {% if exame.estado_nutricional == 'desnutrido' %}selected{% endif %}>Desnutrido</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Veias Superficiais</label>
+                                    <select class="form-select" name="eg_veias">
+                                        <option value="ausentes" {% if exame.veias_superficiais == 'ausentes' %}selected{% endif %}>Ausentes</option>
+                                        <option value="presentes" {% if exame.veias_superficiais == 'presentes' %}selected{% endif %}>Presentes</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">Veias: Varizes e Simetria</label>
+                                    <input type="text" class="form-control" name="eg_veias_obs"
+                                           value="{{ exame.veias_obs|default:'' }}" placeholder="Varizes e simetria">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">Circulação Colateral</label>
+                                    <select class="form-select" name="eg_circ_colat">
+                                        <option value="ausente" {% if exame.circulacao_colateral == 'ausente' %}selected{% endif %}>Ausente</option>
+                                        <option value="presente" {% if exame.circulacao_colateral == 'presente' %}selected{% endif %}>Presente</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label small fw-bold">Edema (local, intensidade, elasticidade,
+                                        temperatura, sensibilidade, consistência)</label>
+                                    <textarea class="form-control" name="eg_edema"
+                                              rows="2">{{ exame.edema|default:'' }}</textarea>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Fala e Linguagem</label>
+                                    <input type="text" class="form-control" name="eg_fala"
+                                           value="{{ exame.fala_linguagem|default:'' }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Marcha</label>
+                                    <input type="text" class="form-control" name="eg_marcha"
+                                           value="{{ exame.marcha|default:'' }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Temp. Axilar (°C)</label>
+                                    <input type="number" step="0.1" class="form-control" name="eg_temp"
+                                           value="{{ exame.temperatura|unlocalize }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="campos-outros" class="secao-exame d-none">
+                            <label class="form-label fw-bold">Observações do Exame</label>
+                            <textarea class="form-control" name="descricao_exame" rows="8">{{ exame.descricao_exame|default:'' }}</textarea>
+                        </div>
+
+                        <div id="campos-nutricional" class="secao-exame d-none">
+                            <h5 class="text-success border-bottom pb-2 mb-3">Roteiro: Avaliação Nutricional</h5>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Peso Habitual (kg)</label>
+                                    <input type="number" step="0.1" class="form-control" name="peso_habitual"
+                                           id="peso_hab" value="{{ exame.peso_habitual|unlocalize }}"
+                                           oninput="calcularPerda()">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Perda de peso nos últimos 6 meses?</label>
+                                    <select class="form-select" name="perdeu_peso_6_meses">
+                                        <option value="nao" {% if exame.perdeu_peso_6_meses == 'nao' %}selected{% endif %}>Não</option>
+                                        <option value="sim" {% if exame.perdeu_peso_6_meses == 'sim' %}selected{% endif %}>Sim</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Qtd Perdida (kg)</label>
+                                    <input type="number" step="0.1" class="form-control" name="quantidade_perdida_kg"
+                                           id="qtd_perdida" value="{{ exame.quantidade_perdida_kg|unlocalize }}"
+                                           oninput="calcularPerda()">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">% Perda</label>
+                                    <input type="text" class="form-control bg-light" name="percentual_perda"
+                                           id="perc_perda" value="{{ exame.percentual_perda|unlocalize }}" readonly>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Ingestão Alimentar</label>
+                                    <select class="form-select" name="ingestao_alimentar">
+                                        <option value="sem_alteracao" {% if exame.ingestao_alimentar == 'sem_alteracao' %}selected{% endif %}>Sem alterações</option>
+                                        <option value="com_alteracao" {% if exame.ingestao_alimentar == 'com_alteracao' %}selected{% endif %}>Com alterações</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Tipo de Dieta</label>
+                                    <select class="form-select" name="dieta_tipo">
+                                        <option value="solida" {% if exame.dieta_tipo == 'solida' %}selected{% endif %}>Sólida subótima</option>
+                                        <option value="liquida_completa" {% if exame.dieta_tipo == 'liquida_completa' %}selected{% endif %}>Líquida completa</option>
+                                        <option value="inanicao" {% if exame.dieta_tipo == 'inanicao' %}selected{% endif %}>Inanição</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Demanda Metabólica</label>
+                                    <select class="form-select" name="demanda_metabolica">
+                                        <option value="baixo" {% if exame.demanda_metabolica == 'baixo' %}selected{% endif %}>Baixo (Estresse)</option>
+                                        <option value="moderado" {% if exame.demanda_metabolica == 'moderado' %}selected{% endif %}>Moderado</option>
+                                        <option value="elevado" {% if exame.demanda_metabolica == 'elevado' %}selected{% endif %}>Elevado</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row g-3">
+                                <h6 class="fw-bold mt-4">Exame Físico Nutricional (0=Normal a 3=Grave)</h6>
+                                <div class="col-md-4">
+                                    <label class="form-label small">Perda Gordura Subcutânea</label>
+                                    <input type="number" min="0" max="3" class="form-control"
+                                           name="perda_gordura_subcutanea"
+                                           value="{{ exame.perda_gordura_subcutanea|default:0 }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small">Perda Muscular</label>
+                                    <input type="number" min="0" max="3" class="form-control" name="perda_muscular"
+                                           value="{{ exame.perda_muscular|default:0 }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small">Ascite</label>
+                                    <input type="number" min="0" max="3" class="form-control" name="ascite"
+                                           value="{{ exame.ascite|default:0 }}">
+                                </div>
+                                <div class="col-12 mt-4">
+                                    <label class="form-label fw-bold">Avaliação Subjetiva Global</label>
+                                    <select class="form-select form-select-lg border-success"
+                                            name="classificacao_nutricional">
+                                        <option value="nutrido" {% if exame.classificacao_nutricional == 'nutrido' %}selected{% endif %}>Nutrido</option>
+                                        <option value="moderado" {% if exame.classificacao_nutricional == 'moderado' %}selected{% endif %}>Moderadamente Desnutrido</option>
+                                        <option value="grave" {% if exame.classificacao_nutricional == 'grave' %}selected{% endif %}>Gravemente Desnutrido</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="campos-dor" class="secao-exame d-none">
+                            <h5 class="text-danger border-bottom pb-2 mb-3">Avaliação Semiológica da Dor</h5>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">Localização</label>
+                                    <input type="text" class="form-control" name="localizacao_dor"
+                                           value="{{ exame.localizacao_dor|default:'' }}"
+                                           placeholder="Ex: Epigástrio, região lombar...">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">Irradiação</label>
+                                    <input type="text" class="form-control" name="irradiacao_dor"
+                                           value="{{ exame.irradiacao_dor|default:'' }}"
+                                           placeholder="Para onde a dor se espalha?">
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Caráter / Qualidade</label>
+                                    <select class="form-select" name="qualidade_carater">
+                                        <option value="">Selecione...</option>
+                                        <option value="queimacao" {% if exame.qualidade_carater == 'queimacao' %}selected{% endif %}>Queimação</option>
+                                        <option value="pontada" {% if exame.qualidade_carater == 'pontada' %}selected{% endif %}>Pontada / Fisgada</option>
+                                        <option value="pulsatil" {% if exame.qualidade_carater == 'pulsatil' %}selected{% endif %}>Pulsátil</option>
+                                        <option value="opressiva" {% if exame.qualidade_carater == 'opressiva' %}selected{% endif %}>Opressiva</option>
+                                        <option value="colica" {% if exame.qualidade_carater == 'colica' %}selected{% endif %}>Cólica</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Frequência</label>
+                                    <select class="form-select" name="frequencia_dor">
+                                        <option value="continua" {% if exame.frequencia_dor == 'continua' %}selected{% endif %}>Contínua</option>
+                                        <option value="intermitente" {% if exame.frequencia_dor == 'intermitente' %}selected{% endif %}>Intermitente</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Intensidade (0 a 10)</label>
+                                    <input type="range" class="form-range" min="0" max="10" step="1"
+                                           name="intensidade_dor" id="id_intensidade"
+                                           value="{{ exame.intensidade_dor|default:0 }}">
+                                    <div class="text-center fw-bold text-danger" id="val_intensidade">0</div>
+                                </div>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">Fatores de Melhora (Atenuantes)</label>
+                                    <textarea class="form-control" name="fatores_atenuantes" rows="2">{{ exame.fatores_atenuantes|default:'' }}</textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">Fatores de Piora (Agravantes)</label>
+                                    <textarea class="form-control" name="fatores_agravantes" rows="2">{{ exame.fatores_agravantes|default:'' }}</textarea>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label small fw-bold">Sintomas Associados / Fenômenos
+                                        Acompanhantes</label>
+                                    <input type="text" class="form-control" name="sintomas_associados_dor"
+                                           value="{{ exame.sintomas_associados_dor|default:'' }}"
+                                           placeholder="Ex: Náuseas, sudorese, palidez...">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{% url 'gerenciar_exames' anamnese.id %}" class="btn btn-light rounded-pill px-4">Cancelar</a>
+                        <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow">Salvar Registro
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    function alternarCampos() {
+        const tipo = document.getElementById('tipo_exame').value;
+        document.querySelectorAll('.secao-exame').forEach(div => div.classList.add('d-none'));
+
+        const mapeamento = {
+            'geral': 'campos-geral',
+            'nutricional': 'campos-nutricional',
+            'dor': 'campos-dor' // Novo mapeamento
+        };
+
+        const idMostrar = mapeamento[tipo] || 'campos-outros';
+        document.getElementById(idMostrar).classList.remove('d-none');
+    }
+
+    // Atualiza o número da intensidade em tempo real
+    document.getElementById('id_intensidade').addEventListener('input', function () {
+        document.getElementById('val_intensidade').innerText = this.value;
+    });
+
+    function calcularIMC() {
+        const peso = parseFloat(document.getElementById('id_peso').value.replace(',', '.'));
+        const alturaCm = parseFloat(document.getElementById('id_altura').value);
+        if (peso > 0 && alturaCm > 0) {
+            const alturaM = alturaCm / 100;
+            document.getElementById('id_imc').value = (peso / (alturaM * alturaM)).toFixed(2).replace('.', ',');
+        }
+    }
+
+    function calcularPerda() {
+        const habitual = parseFloat(document.getElementById('peso_hab').value);
+        const perdida = parseFloat(document.getElementById('qtd_perdida').value);
+
+        if (habitual > 0 && perdida >= 0) {
+            const percentual = ((perdida / habitual) * 100).toFixed(1);
+            document.getElementById('perc_perda').value = percentual + "%";
+        }
+    }
+
+    document.getElementById('id_peso').addEventListener('input', calcularIMC);
+    document.getElementById('id_altura').addEventListener('input', calcularIMC);
+    window.onload = alternarCampos;
+</script>
 {% endblock %}
