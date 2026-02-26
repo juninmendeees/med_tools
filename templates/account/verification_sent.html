@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Verifique seu e-mail - MedTools{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-md-6 col-lg-5">
+        <div class="card card-custom p-4 p-md-5 shadow-sm border-0 text-center">
+            <div class="mb-4">
+                <i class="bi bi-envelope-check text-primary" style="font-size: 4rem;"></i>
+            </div>
+            
+            <h2 class="fw-bold">Verifique seu e-mail</h2>
+            <p class="text-muted mt-3">
+                Enviamos um link de confirmação para o endereço informado. 
+                Por favor, acesse sua caixa de entrada para finalizar o cadastro.
+            </p>
+
+            <div class="alert alert-info small mt-4">
+                <i class="bi bi-info-circle me-2"></i>
+                Não esqueça de verificar a sua pasta de <strong>Spam</strong> caso não encontre o e-mail em alguns minutos.
+            </div>
+
+            <div class="mt-4">
+                <p class="small text-muted">Ainda não recebeu? <a href="{% url 'account_email' %}" class="text-info fw-bold text-decoration-none">Tentar enviar novamente</a></p>
+            </div>
+            
+            <hr class="my-4">
+            
+            <a href="{% url 'account_login' %}" class="btn btn-outline-primary rounded-pill px-4">
+                Voltar para o Login
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

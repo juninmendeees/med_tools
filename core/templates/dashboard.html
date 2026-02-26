@@ -11,57 +11,48 @@
         </div>
         <div class="text-end">
             <span class="badge bg-light text-dark border p-2 rounded-pill">
-                <i class="bi bi-calendar3 me-2 text-info"></i> 05 de Janeiro, 2026
+                <i class="bi bi-calendar3 me-2 text-info"></i>
+                    {% now "d \d\e F, Y" %}
             </span>
         </div>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-5 g-3 mb-5">
-    <div class="col">
-        <a href="{% url 'cadastro_anamnese' %}" class="text-decoration-none h-100 d-block">
-            <div class="card card-custom bg-primary text-white p-4 shadow-sm border-0 h-100 d-flex flex-column align-items-center justify-content-center text-center">
-                <i class="bi bi-file-earmark-medical fs-1 mb-2"></i>
-                <h6 class="fw-bold mb-0">Nova Anamnese</h6>
-            </div>
-        </a>
-    </div>
+        <div class="row row-cols-1 row-cols-md-5 g-3 mb-5">
+        <div class="col">
+            <a href="{% url 'indice_curso' %}" class="text-decoration-none h-100 d-block">
+                <div class="card card-custom bg-primary text-white p-4 ...">
+                    <i class="bi bi-film fs-1 mb-2"></i> <h6 class="fw-bold mb-0">Curso Semiologia</h6>
+                </div>
+            </a>
+        </div>
 
-    <div class="col">
-        <a href="{% url 'consulta_anamnese' %}" class="text-decoration-none h-100 d-block text-dark">
-            <div class="card card-custom p-4 border-0 shadow-sm h-100 d-flex flex-column align-items-center justify-content-center text-center">
-                <i class="bi bi-search text-primary fs-1 mb-2"></i>
-                <h6 class="fw-bold mb-0">Consultar Anamnese</h6>
-            </div>
-        </a>
-    </div>
+            <div class="col">
+            <a href="{% url 'indice_curso' %}" class="text-decoration-none h-100 d-block text-dark">
+                <div class="card card-custom p-4 border-0 shadow-sm h-100 d-flex flex-column align-items-center justify-content-center text-center">
+                    <i class="bi bi-pencil-square text-primary fs-1 mb-2"></i>
+                    <h6 class="fw-bold mb-0">Questões</h6>
+                </div>
+            </a>
+        </div>
 
-    <div class="col">
-        <a href="{% url 'cadastro_exame_fisico' %}" class="text-decoration-none h-100 d-block text-dark">
-            <div class="card card-custom p-4 border-0 shadow-sm h-100 d-flex flex-column align-items-center justify-content-center text-center">
-                <i class="bi bi-plus-circle text-primary fs-1 mb-2"></i>
-                <h6 class="fw-bold mb-0">Novo Exame Físico</h6>
-            </div>
-        </a>
-    </div>
+        <div class="col">
+            <a href="{% url 'dashboard_flashcards' %}" class="text-decoration-none h-100 d-block text-dark">
+                <div class="card card-custom p-4 border-0 shadow-sm h-100 d-flex flex-column align-items-center justify-content-center text-center">
+                    <i class="bi bi-layers text-primary fs-1 mb-2"></i>
+                    <h6 class="fw-bold mb-0">Flashcards</h6>
+                </div>
+            </a>
+        </div>
 
-    <div class="col">
-        <a href="#" class="text-decoration-none h-100 d-block text-dark">
-            <div class="card card-custom p-4 border-0 shadow-sm h-100 d-flex flex-column align-items-center justify-content-center text-center">
-                <i class="bi bi-layers text-primary fs-1 mb-2"></i>
-                <h6 class="fw-bold mb-0">Flashcards</h6>
-            </div>
-        </a>
+        <div class="col">
+            <a href="#" class="text-decoration-none h-100 d-block text-dark">
+                <div class="card card-custom p-4 border-0 shadow-sm h-100 d-flex flex-column align-items-center justify-content-center text-center">
+                    <i class="bi bi-diagram-3 text-primary fs-1 mb-2"></i>
+                    <h6 class="fw-bold mb-0">Mapas Mentais</h6>
+                </div>
+            </a>
+        </div>
     </div>
-
-    <div class="col">
-        <a href="#" class="text-decoration-none h-100 d-block text-dark">
-            <div class="card card-custom p-4 border-0 shadow-sm h-100 d-flex flex-column align-items-center justify-content-center text-center">
-                <i class="bi bi-diagram-3 text-primary fs-1 mb-2"></i>
-                <h6 class="fw-bold mb-0">Mapas Mentais</h6>
-            </div>
-        </a>
-    </div>
-</div>
 
     <div class="row">
         <div class="col-12">
@@ -92,7 +83,7 @@
 
     .card-custom:hover {
         transform: translateY(-8px);
-        box-shadow: 0 12px 24px rgba(0,0,0,0.12) !important;
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12) !important;
     }
 
     .bi-plus-circle {
@@ -100,6 +91,8 @@
         stroke-width: 1.5;
     }
 
-    .text-primary { color: #0d6efd !important; }
+    .text-primary {
+        color: #0d6efd !important;
+    }
 </style>
 {% endblock %}

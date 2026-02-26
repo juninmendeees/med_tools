@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="display-5 font-weight-bold">🎓 Central de Estudos</h2>
+            <p class="text-muted">Organize seu conhecimento e mantenha sua memória em dia.</p>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <div class="card bg-primary text-white shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Para Revisar Hoje</h5>
+                    <h2 class="display-4">{{ revisoes_hoje }}</h2>
+                    <p>Cards que precisam da sua atenção agora.</p>
+                    <a href="{% url 'estudo_flashcards' %}" class="btn btn-light btn-block font-weight-bold">Começar Agora</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card bg-light shadow">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">Biblioteca Total</h5>
+                    <h2 class="display-4 text-dark">{{ total_cards }}</h2>
+                    <p class="text-muted">Flashcards cadastrados no seu perfil.</p>
+                    <a href="{% url 'criar_flashcard' %}" class="btn btn-outline-primary btn-block">Criar Novo Card</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h4>Suas Disciplinas</h4>
+    <div class="row">
+        {% for cat in categorias %}
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 shadow-sm border-bottom-primary">
+                <div class="card-body">
+                    <h6 class="font-weight-bold text-primary text-uppercase mb-1">{{ cat.categoria }}</h6>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ cat.total }} cards</div>
+                    <div class="mt-2">
+                        <span class="badge {% if cat.pendentes > 0 %}badge-danger{% else %}badge-success{% endif %}">
+                            {{ cat.pendentes }} pendentes
+                        </span>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-0">
+                    <a href="{% url 'estudo_flashcards' %}?categoria={{ cat.categoria }}" class="btn btn-sm btn-link p-0 text-primary">Estudar esta categoria →</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

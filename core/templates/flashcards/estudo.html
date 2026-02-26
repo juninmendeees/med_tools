@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Estilização Geral e Padronização de Imagens */
+    .flashcard-img {
+        max-width: 100%;
+        max-height: 250px;
+        border: 4px solid #4e73df; /* Borda estilizada solicitada */
+        border-radius: 15px;
+        object-fit: contain;
+        display: block;
+        margin: 15px auto;
+        background: #fff;
+        padding: 5px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    /* Esconde imagens quebradas ou originais que venham no HTML do Anki */
+    .card-text img {
+        display: none;
+    }
+
+    /* Container do Flip Card */
+    .flip-card {
+        background-color: transparent;
+        perspective: 1000px;
+        height: 450px;
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .flip-card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-style: preserve-3d;
+        cursor: pointer;
+    }
+
+    .flip-card.flipped .flip-card-inner {
+        transform: rotateY(180deg);
+    }
+
+    .flip-card-front, .flip-card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .flip-card-front {
+        background-color: #ffffff;
+        border: 2px solid #4e73df;
+    }
+
+    .flip-card-back {
+        background-color: #f8f9fc;
+        border: 2px solid #1cc88a;
+        transform: rotateY(180deg);
+    }
+
+    .card-text {
+        font-size: 1.4rem;
+        color: #333;
+        line-height: 1.6;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>📚 Sessão de Estudos</h2>
+        <a href="{% url 'criar_flashcard' %}" class="btn btn-primary shadow-sm">
+            <i class="fas fa-plus"></i> Criar Flashcard
+        </a>
+    </div>
+
+    <div class="card mb-4 shadow-sm border-0">
+        <div class="card-body bg-light rounded">
+            <form method="GET" class="row align-items-center">
+                <div class="col-auto">
+                    <label class="font-weight-bold mr-2">Filtrar por Categoria:</label>
+                </div>
+                <div class="col-md-4">
+                    <select name="categoria" onchange="this.form.submit()" class="form-control">
+                        <option value="">Todas as Categorias</option>
+                        {% for cat in categorias %}
+                            <option value="{{ cat }}" {% if cat == categoria_ativa %}selected{% endif %}>{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if card %}
+    <div class="flip-card" id="cardElement">
+        <div class="flip-card-inner" onclick="flipCard()">
+            <div class="flip-card-front">
+                <span class="badge badge-primary mb-3">{{ card.categoria }}</span>
+                <div class="card-text">
+                    {{ card.pergunta|safe }}
+                </div>
+                <p class="text-muted mt-4 small"><i class="fas fa-sync"></i> Clique para virar</p>
+            </div>
+
+            <div class="flip-card-back">
+                <span class="badge badge-success mb-3">Resposta</span>
+                <div class="card-text">
+                    {{ card.resposta|safe }}
+                </div>
+
+                {% if card.imagem %}
+                    <img src="{{ card.imagem.url }}" class="flashcard-img">
+                {% endif %}
+
+                <div class="mt-4 w-100" onclick="event.stopPropagation();">
+                    <p class="small text-muted mb-2">Como foi esse cartão?</p>
+                    <form action="{% url 'responder_card' card.id %}" method="POST" class="d-flex justify-content-around">
+                        {% csrf_token %}
+                        <button name="qualidade" value="1" class="btn btn-danger btn-sm px-3">Difícil (1d)</button>
+                        <button name="qualidade" value="2" class="btn btn-warning btn-sm px-3">Médio (3d)</button>
+                        <button name="qualidade" value="3" class="btn btn-success btn-sm px-3">Fácil (7d)</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <div class="mb-3" style="font-size: 4rem;">🎉</div>
+        <h4 class="text-muted">Tudo limpo por aqui!</h4>
+        <p>Você não tem cards para revisar nesta categoria no momento.</p>
+        <a href="{% url 'estudo_flashcards' %}" class="btn btn-outline-primary">Ver todas as categorias</a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    function flipCard() {
+        document.getElementById('cardElement').classList.toggle('flipped');
+    }
+</script>
+{% endblock %}

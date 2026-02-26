@@ -1,104 +1,109 @@
-{% extends 'base.html' %}
+{% extends 'base_logado.html' %}
 
-{% block title %}Gerenciar Exames - {{ anamnese.nome }}{% endblock %}
+{% block title %}Histórico Geral de Exames{% endblock %}
 
-{% block content %}
-<div class="container-fluid">
+{% block content_logado %}
+<div class="container-fluid py-4">
     <div class="card card-custom p-4 border-0 shadow-sm">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-1">
-                        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}" class="text-decoration-none">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="{% url 'consulta_anamnese' %}" class="text-decoration-none">Consultar Anamneses</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Exames Físicos</li>
-                    </ol>
-                </nav>
-                <h3 class="fw-bold text-primary mb-0">Exames de: {{ anamnese.nome }}</h3>
-                <p class="text-muted small mb-0">Gerencie os exames vinculados a este prontuário.</p>
+                <h3 class="fw-bold text-primary mb-0">Histórico de Exames Físicos</h3>
+                <p class="text-muted small mb-0">Visualize e gerencie todos os exames semiológicos realizados.</p>
             </div>
-            <a href="{% url 'cadastro_exame_fisico' %}?vinculo={{ anamnese.id }}" class="btn btn-info text-white rounded-pill px-4 shadow-sm fw-bold">
+            <a href="{% url 'selecionar_paciente_exame' %}"
+               class="btn btn-info text-white rounded-pill px-4 shadow-sm fw-bold">
                 <i class="bi bi-plus-lg me-2"></i>Novo Exame
             </a>
         </div>
 
+        <form method="GET" class="mb-4">
+            <div class="input-group bg-light rounded-pill px-3 py-1">
+                <span class="input-group-text border-0 bg-transparent text-muted"><i class="bi bi-search"></i></span>
+                <input type="text" name="nome" class="form-control border-0 bg-transparent"
+                       placeholder="Pesquisar por nome do paciente..." value="{{ request.GET.nome }}">
+                <button type="submit" class="btn btn-primary rounded-pill px-4 ms-2">Filtrar</button>
+            </div>
+        </form>
+
         {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-4 shadow-sm mb-4" role="alert">
-                    <i class="bi bi-info-circle me-2"></i> {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-4 shadow-sm mb-4" role="alert">
+                <i class="bi bi-info-circle me-2"></i> {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
             {% endfor %}
         {% endif %}
 
         <div class="table-responsive">
             <table class="table table-hover align-middle">
                 <thead class="table-light">
-                    <tr>
-                        <th class="ps-3">Data e Hora</th>
-                        <th>Resumo da Descrição</th>
-                        <th class="text-center">Ações</th>
-                    </tr>
+                <tr>
+                    <th class="ps-3">Data e Hora</th>
+                    <th>Paciente</th> <th>Tipo de Exame</th>
+                    <th class="text-center">Ações</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {% for exame in exames %}
-                    <tr>
-                        <td class="ps-3">
-                            <div class="fw-bold">{{ exame.data_exame|date:"d/m/Y" }}</div>
-                            <small class="text-muted">{{ exame.data_exame|date:"H:i" }}</small>
-                        </td>
-                        <td>
-                            <div class="text-muted text-truncate" style="max-width: 500px;">
-                                {{ exame.descricao_exame|default:"Nenhuma observação registrada." }}
+                {% for exame in exames %}
+                <tr>
+                    <td class="ps-3">
+                        <div class="fw-bold">{{ exame.data_exame|date:"d/m/Y" }}</div>
+                        <small class="text-muted">{{ exame.data_exame|date:"H:i" }}</small>
+                    </td>
+                    <td>
+                        <div class="fw-bold text-dark">{{ exame.anamnese.paciente.nome }}</div>
+                        <small class="text-muted">ID Anamnese: #{{ exame.anamnese.id }}</small>
+                    </td>
+                    <td>
+                        <span class="badge bg-light text-primary border rounded-pill">
+                            {{ exame.get_tipo_exame_display }}
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <div class="btn-group gap-1">
+                            <a href="{% url 'editar_exame_fisico' exame.id %}"
+                               class="btn btn-sm btn-outline-primary rounded-circle" title="Editar Exame">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'gerar_pdf_exame_individual' exame.id %}" target="_blank"
+                               class="btn btn-sm btn-outline-secondary rounded-circle" title="Imprimir">
+                                <i class="bi bi-printer"></i>
+                            </a>
+                            <button type="button" class="btn btn-sm btn-outline-danger rounded-circle"
+                                    data-bs-toggle="modal" data-bs-target="#modalExcluirExame{{ exame.id }}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+
+                <div class="modal fade" id="modalExcluirExame{{ exame.id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-0 shadow-lg card-custom">
+                            <div class="modal-header bg-danger text-white border-0">
+                                <h5 class="modal-title fw-bold">Confirmar Exclusão</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                             </div>
-                        </td>
-                        <td class="text-center">
-                            <div class="btn-group gap-1">
-                                <a href="{% url 'editar_exame_fisico' exame.id %}" class="btn btn-sm btn-outline-primary rounded-circle" title="Editar Exame">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-
-                                <a href="#" class="btn btn-sm btn-outline-danger rounded-circle" title="Gerar PDF do Exame">
-                                    <i class="bi bi-file-earmark-pdf"></i>
-                                </a>
-
-                                <button type="button" class="btn btn-sm btn-outline-dark rounded-circle"
-                                        data-bs-toggle="modal" data-bs-target="#modalExcluirExame{{ exame.id }}" title="Excluir Exame">
-                                    <i class="bi bi-trash text-danger"></i>
-                                </button>
+                            <div class="modal-body text-center p-4">
+                                <p class="fs-5">Deseja excluir o <strong>{{ exame.get_tipo_exame_display }}</strong> de:</p>
+                                <h4 class="fw-bold">{{ exame.anamnese.paciente.nome }}</h4>
+                                <p class="text-muted small">Realizado em: {{ exame.data_exame|date:"d/m/Y H:i" }}</p>
                             </div>
-                        </td>
-                    </tr>
-
-                    <div class="modal fade" id="modalExcluirExame{{ exame.id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content border-0 shadow-lg card-custom">
-                                <div class="modal-header bg-light border-0">
-                                    <h5 class="modal-title fw-bold text-danger">Excluir Exame Físico</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body text-center p-4">
-                                    <i class="bi bi-exclamation-triangle text-danger display-4 mb-3"></i>
-                                    <p class="fs-5">Tem certeza que deseja excluir o exame do dia <br><strong>{{ exame.data_exame|date:"d/m/Y" }} às {{ exame.data_exame|date:"H:i" }}</strong>?</p>
-                                    <p class="text-muted small">Esta ação é irreversível e removerá o registro do histórico do paciente.</p>
-                                </div>
-                                <div class="modal-footer border-0 justify-content-center pb-4">
-                                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
-                                    <a href="{% url 'excluir_exame_fisico' exame.id %}" class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm">Confirmar Exclusão</a>
-                                </div>
+                            <div class="modal-footer border-0 justify-content-center pb-4">
+                                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                                <a href="{% url 'excluir_exame_fisico' exame.id %}" class="btn btn-danger rounded-pill px-4 fw-bold">Confirmar Exclusão</a>
                             </div>
                         </div>
                     </div>
-
-                    {% empty %}
-                    <tr>
-                        <td colspan="3" class="text-center py-5">
-                            <i class="bi bi-clipboard-x display-4 text-muted mb-3 d-block"></i>
-                            <p class="text-muted">Nenhum exame físico encontrado para este paciente.</p>
-                        </td>
-                    </tr>
-                    {% endfor %}
+                </div>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center py-5">
+                        <p class="text-muted">Nenhum exame físico encontrado.</p>
+                    </td>
+                </tr>
+                {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -107,16 +112,6 @@
 
 <style>
     .card-custom { border-radius: 1rem; }
-    .btn-group .btn {
-        width: 34px;
-        height: 34px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-        transition: all 0.2s;
-    }
-    .btn-group .btn:hover { transform: translateY(-2px); }
-    .table thead th { font-weight: 600; text-transform: uppercase; font-size: 0.75rem; color: #6c757d; }
+    .rounded-circle { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; padding: 0; }
 </style>
 {% endblock %}

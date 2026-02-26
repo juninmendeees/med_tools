@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+{% block body_structure %}
+<style>
+    /* 1. Layout Principal da Área Logada */
+    .sidebar-container {
+        display: flex;
+        /* Garante que o container ocupe o resto da tela abaixo da Navbar (90px) */
+        min-height: calc(100vh - 90px);
+        background-color: #f4f7f6;
+    }
+
+    /* 2. Estilização da Sidebar Fixa */
+    .sidebar {
+        width: 240px;
+        background-color: #ffffff;
+        border-right: 1px solid #dee2e6;
+        padding: 20px 10px;
+        position: fixed; /* Mantém a barra presa na lateral */
+        top: 90px;      /* Começa exatamente abaixo da Navbar */
+        bottom: 0;
+        overflow-y: auto;
+        z-index: 1000;
+    }
+
+    /* 3. Área de Conteúdo (Ajustada para não ser coberta) */
+    .main-wrapper-logado {
+        margin-left: 240px; /* Espaço idêntico à largura da sidebar */
+        padding: 30px;
+        width: 100%;
+        min-height: calc(100vh - 90px);
+    }
+
+    /* 4. Itens do Menu Lateral */
+    .section-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: #adb5bd;
+        margin: 15px 0 8px 12px;
+        letter-spacing: 0.5px;
+    }
+
+    .nav-item-link {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        color: #495057;
+        text-decoration: none;
+        border-radius: 8px;
+        margin-bottom: 4px;
+        transition: 0.2s;
+        font-weight: 500;
+    }
+
+    .nav-item-link:hover {
+        background-color: #f0f7ff;
+        color: #0dcaf0;
+    }
+
+    .nav-item-link.active {
+        background-color: #0d6efd;
+        color: white !important;
+    }
+
+    .nav-item-link i {
+        margin-right: 12px;
+        font-size: 1.1rem;
+    }
+
+    /* 5. Correção de Alinhamento para Formulários (Antecedentes) */
+    .align-bottom-field {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        height: 100%;
+    }
+</style>
+
+<div class="sidebar-container">
+    <aside class="sidebar shadow-sm">
+        <div class="section-label">Principal</div>
+        <a href="{% url 'dashboard' %}" class="nav-item-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+            <i class="bi bi-grid-1x2-fill"></i> Dashboard
+        </a>
+
+        <div class="section-label">Clínica</div>
+        <a href="{% url 'consulta_anamnese' %}" class="nav-item-link {% if 'anamnese' in request.path %}active{% endif %}">
+            <i class="bi bi-file-earmark-medical"></i> Anamneses
+        </a>
+        <a href="{% url 'gerenciar_exames' %}" class="nav-item-link">
+            <i class="bi bi-clipboard-pulse"></i> Exames Físicos
+        </a>
+
+        <div class="section-label">Educação</div>
+        <a href="#" class="nav-item-link"><i class="bi bi-layers"></i> Flashcards</a>
+        <a href="#" class="nav-item-link"><i class="bi bi-diagram-3"></i> Mapas Mentais</a>
+
+        <div class="mt-auto border-top pt-3">
+            <a href="{% url 'account_logout'%}" class="nav-item-link text-danger">
+                <i class="bi bi-box-arrow-left"></i> Sair
+            </a>
+        </div>
+    </aside>
+
+    <main class="main-wrapper-logado">
+        {% block content_logado %}{% endblock %}
+    </main>
+</div>
+{% endblock %}
