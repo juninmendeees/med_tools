@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-sm p-4" style="border-radius: 20px; border-left: 5px solid #4e73df;">
+        <h2 class="mb-4">🚀 Criar Novo Flashcard</h2>
+        
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label font-weight-bold">Pergunta</label>
+                    {{ form.pergunta }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label font-weight-bold">Resposta</label>
+                    {{ form.resposta }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label font-weight-bold">Categoria</label>
+                    {{ form.categoria }}
+                    <small class="text-muted">Ex: Cardiologia, Farmacologia...</small>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label font-weight-bold">Imagem (Opcional)</label>
+                    {{ form.imagem }}
+                    <small class="text-block">A imagem será salva automaticamente com um ID único (UUID).</small>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-success btn-lg px-5">Salvar Flashcard</button>
+                <a href="{% url 'estudo_flashcards' %}" class="btn btn-outline-secondary btn-lg px-4">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

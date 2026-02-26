@@ -1,34 +1,87 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
+from django.conf import settings
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
-class Usuario(models.Model):
-    usuario = models.CharField(max_length=100)
-    senha = models.CharField(max_length=100)
-    nome = models.CharField(max_length=100)
-    sobrenome = models.CharField(max_length=100)
-    email = models.EmailField()
-    telefone = models.IntegerField()
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+
+
+class UsuarioManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('O e-mail é obrigatório')
+        email = self.normalize_email(email)
+        # Se o username não for passado, usamos o email
+        extra_fields.setdefault('username', email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        # Garante que o username seja o email no superuser também
+        extra_fields.setdefault('username', email)
+        return self.create_user(email, password, **extra_fields)
+
+
+class Usuario(AbstractUser):
+    telefone = models.CharField(max_length=20)
+    email_validado = models.BooleanField(default=False)
+    expiracao_licenca = models.DateField(null=True, blank=True)
+    licenca_ativa = models.BooleanField(default=False)
+    email = models.EmailField(unique=True)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name', 'last_name']
+
+    # Vincula o Manager customizado
+    objects = UsuarioManager()
+
+    def tem_licenca_ativa(self):
+        if self.licenca_ativa and self.expiracao_licenca:
+            return self.expiracao_licenca > timezone.now()
+        return False
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} ({self.email})"
+
+class Paciente(models.Model):
+    # Identidade do Paciente (Dados que não mudam a cada consulta)
+    nome = models.CharField(max_length=200)
+    cpf = models.CharField(max_length=14, unique=True, null=True, blank=True)
+    rg = models.CharField(max_length=20, unique=True, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
+    data_nascimento = models.DateField(null=True, blank=True)
+    sexo = models.CharField(max_length=20, choices=[('M', 'Masculino'), ('F', 'Feminino')], null=True)
+    cor_etnia = models.CharField(max_length=50, null=True, blank=True)
+    religiao = models.CharField(max_length=100, null=True, blank=True)
+    profissao = models.CharField(max_length=100, null=True, blank=True)
+    estado_civil = models.CharField(max_length=50, null=True, blank=True)
+    endereco = models.CharField(max_length=255, null=True, blank=True)
+    plano_saude = models.CharField(max_length=100, null=True, blank=True)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    data_criacao = models.DateTimeField(auto_now_add=True)
+    ultima_atualizacao = models.DateTimeField(auto_now=True)
+
     def __str__(self):
         return self.nome
+
+
 
 class Anamnese(models.Model):
     # Relacionamento com o Usuário (Médico/Estudante)
     # Nota: User não é deletado, apenas inativado via is_active no Django
-    usuario = models.ForeignKey(User, on_delete=models.PROTECT, related_name='anamneses')
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     data_criacao = models.DateTimeField(auto_now_add=True)
     ultima_atualizacao = models.DateTimeField(auto_now=True)
 
-    # --- 1. IDENTIFICAÇÃO ---
-    nome = models.CharField(max_length=255)
-    idade = models.PositiveIntegerField(null=True, blank=True)
-    estado_civil = models.CharField(max_length=50, null=True, blank=True)
-    endereco = models.CharField(max_length=255, null=True, blank=True)
-    religiao = models.CharField(max_length=100, null=True, blank=True)
-    etnia = models.CharField(max_length=50, null=True, blank=True)
-    profissao = models.CharField(max_length=100, null=True, blank=True)
-    plano_saude = models.CharField(max_length=100, null=True, blank=True)
+    # Relacionamento: Toda anamnese pertence a um paciente
+    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='anamneses')
 
-    # --- 2. QUEIXA E HDA ---
+        # --- 2. QUEIXA E HDA ---
     queixa_principal = models.TextField(null=True, blank=True)
     hma = models.TextField(null=True, blank=True) # História da Doença Atual
 
@@ -84,7 +137,7 @@ class Anamnese(models.Model):
 class ExameFisico(models.Model):
     TIPOS_EXAME = [
         ('geral', 'Exame Físico Geral'),
-        ('psiquico', 'Psíquico'),
+        ('psiquico', 'Exame Psíquico'),
         ('geriatria', 'Idoso / Geriatria Ampla'),
         ('pele', 'Pele'),
         ('linfonodos', 'Linfonodos'),
@@ -212,5 +265,87 @@ class ExameFisico(models.Model):
     irradiacao_dor = models.CharField(max_length=255, blank=True, null=True)
     sintomas_associados_dor = models.TextField(blank=True, null=True)
 
+    # Campos para Exame Psíquico
+    impressao_geral_psic = models.TextField(null=True, blank=True)
+    consciencia_psic = models.TextField(null=True, blank=True)
+    atencao_psic = models.TextField(null=True, blank=True)
+    orientacao_psic = models.TextField(null=True, blank=True)
+    sensopercepcao_psic = models.TextField(null=True, blank=True)
+    memoria_psic = models.TextField(null=True, blank=True)
+    psicomotricidade_psic = models.TextField(null=True, blank=True)
+    vontade_psic = models.TextField(null=True, blank=True)
+    linguagem_psic = models.TextField(null=True, blank=True)
+    pensamento_psic = models.TextField(null=True, blank=True)
+    inteligencia_psic = models.TextField(null=True, blank=True)
+    afetividade_humor_psic = models.TextField(null=True, blank=True)
+
     def __str__(self):
         return f"{self.get_tipo_exame_display()} - {self.anamnese.nome}"
+
+
+
+@receiver(pre_save, sender=Usuario)
+def replicar_email_no_username(sender, instance, **kwargs):
+    # Garante que sempre que o email mudar (ou for criado), o username acompanhe
+    if instance.email:
+        instance.username = instance.email
+
+
+import uuid
+import os
+from django.db import models
+from django.conf import settings
+from django.utils import timezone
+
+
+def get_file_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = f"{uuid.uuid4()}.{ext}"
+    return os.path.join('flashcards/imagens/', filename)
+
+
+class Flashcard(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    pergunta = models.TextField()
+    resposta = models.TextField()
+    imagem = models.ImageField(upload_to=get_file_path, null=True, blank=True)
+    categoria = models.CharField(max_length=100)
+    is_publico = models.BooleanField(default=False)
+
+    # Lógica Estilo Anki (Algoritmo SM-2 simplificado)
+    intervalo = models.IntegerField(default=0)  # Dias para a próxima revisão
+    facilidade = models.FloatField(default=2.5)  # Fator de facilidade
+    repeticoes = models.IntegerField(default=0)  # Quantas vezes foi acertado
+    proxima_revisao = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.categoria} - {self.pergunta[:30]}"
+
+class Modulo(models.Model):
+        titulo = models.CharField(max_length=200)
+        ordem = models.IntegerField(default=1)
+
+        def __str__(self):
+            return f"{self.ordem}. {self.titulo}"
+
+class Aula(models.Model):
+        modulo = models.ForeignKey(Modulo, on_delete=models.CASCADE, related_name='aulas')
+        titulo = models.CharField(max_length=200)
+        video_url = models.CharField(max_length=255, help_text="ID do vídeo ou URL (YouTube/Vimeo)")
+        ordem = models.IntegerField(default=1)
+
+        # Campos para filtros automáticos que você solicitou
+        categoria_relacionada = models.CharField(max_length=100, help_text="Ex: Semiologia Cardiovascular")
+        glossario_json = models.JSONField(default=dict, blank=True, help_text="Termos e definições da aula")
+
+        def __str__(self):
+            return self.titulo
+
+class ProgressoAula(models.Model):
+        usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+        aula = models.ForeignKey(Aula, on_delete=models.CASCADE)
+        concluida = models.BooleanField(default=False)
+        data_conclusao = models.DateTimeField(auto_now=True)
+
+        class Meta:
+            unique_together = ('usuario', 'aula')

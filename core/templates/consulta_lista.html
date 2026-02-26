@@ -1,133 +1,108 @@
 {% extends 'base_logado.html' %}
+
 {% block content_logado %}
-
-
-
-
 <div class="container-fluid">
-    <div class="card card-custom p-4 border-0 shadow-sm">
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show border-0 shadow-sm mb-4 rounded-pill ps-4" role="alert">
+                {% if message.tags == 'success' %}
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                {% elif message.tags == 'warning' %}
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                {% else %}
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                {% endif %}
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card card-custom p-4 border-0 shadow-sm mb-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3 class="fw-bold text-primary mb-0">Consultar Anamneses</h3>
-            <a href="{% url 'cadastro_anamnese' %}" class="btn btn-primary rounded-pill px-4 shadow-sm">
+            <h3 class="fw-bold text-primary mb-0">Histórico de Anamneses</h3>
+            <a href="{% url 'selecionar_paciente_anamnese' %}" class="btn btn-primary rounded-pill px-4 shadow-sm">
                 <i class="bi bi-plus-lg me-2"></i>Nova Anamnese
             </a>
         </div>
 
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-4 shadow-sm mb-4" role="alert">
-                    <i class="bi bi-info-circle me-2"></i> {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
-
-        <form method="GET" class="row g-2 mb-4">
-            <div class="col-md-10">
-                <div class="input-group">
-                    <span class="input-group-text bg-white border-end-0 rounded-start-pill text-muted">
-                        <i class="bi bi-search"></i>
-                    </span>
-                    <input type="text" name="q" class="form-control border-start-0 rounded-end-pill" 
-                           placeholder="Buscar por nome do paciente ou profissão..." value="{{ termo|default:'' }}">
-                </div>
+        <form method="GET" action="{% url 'consulta_anamnese' %}" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label small fw-bold text-muted">Nome do Paciente</label>
+                <input type="text" name="nome" class="form-control form-control-sm border-0 bg-light" placeholder="Pesquisar..." value="{{ request.GET.nome }}">
             </div>
             <div class="col-md-2">
-                <button type="submit" class="btn btn-dark w-100 rounded-pill fw-bold">Filtrar</button>
+                <label class="form-label small fw-bold text-muted">CPF</label>
+                <input type="text" name="cpf" class="form-control form-control-sm border-0 bg-light" placeholder="000.000..." value="{{ request.GET.cpf }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold text-muted">Nascimento</label>
+                <input type="date" name="data_nascimento" class="form-control form-control-sm border-0 bg-light" value="{{ request.GET.data_nascimento }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold text-muted">Data Cadastro</label>
+                <input type="date" name="data_criacao" class="form-control form-control-sm border-0 bg-light" value="{{ request.GET.data_criacao }}">
+            </div>
+
+            <div class="col-md-3 d-flex align-items-end gap-2">
+                <button type="submit" class="btn btn-info btn-sm flex-grow-1 text-white fw-bold rounded-pill shadow-sm">
+                    <i class="bi bi-filter me-1"></i> Filtrar
+                </button>
+                <a href="{% url 'consulta_anamnese' %}" class="btn btn-light btn-sm flex-grow-1 fw-bold rounded-pill border shadow-sm">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i> Limpar
+                </a>
             </div>
         </form>
+    </div>
 
+    <div class="card card-custom border-0 shadow-sm">
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
+            <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th class="ps-3">Paciente</th>
-                        <th>Data Registro</th>
-                        <th>Vínculos</th>
-                        <th class="text-center">Ações</th>
+                        <th class="ps-4" style="width: 80px;">#ID</th>
+                        <th>Paciente</th>
+                        <th>Data da Consulta</th>
+                        <th class="text-center">Exames Físicos</th>
+                        <th class="text-center">Ações de Prontuário</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for anamnese in anamneses %}
                     <tr>
-                        <td class="ps-3">
-                            <div class="fw-bold">{{ anamnese.nome }}</div>
-                            <small class="text-muted">{{ anamnese.idade }} anos • {{ anamnese.profissao|default:"Profissão não informada" }}</small>
-                        </td>
-                        <td>{{ anamnese.data_criacao|date:"d/m/Y" }} <br><small class="text-muted">{{ anamnese.data_criacao|date:"H:i" }}</small></td>
+                        <td class="ps-4 text-muted fw-bold">#{{ anamnese.id }}</td>
                         <td>
-                            <a href="{% url 'gerenciar_exames' anamnese.id %}" class="text-decoration-none">
-                            {% if anamnese.exames_fisicos.exists %}
-                            <span class="badge bg-info-subtle text-info border border-info rounded-pill px-3">
-                            {{ anamnese.exames_fisicos.count }} Exame(s) Físico(s)
+                            <div class="fw-bold text-dark">{{ anamnese.paciente.nome }}</div>
+                            <small class="text-muted">Nasc: {{ anamnese.paciente.data_nascimento|date:"d/m/Y"|default:"-" }}</small>
+                        </td>
+                        <td>{{ anamnese.data_criacao|date:"d/m/Y H:i" }}</td>
+                        <td class="text-center">
+                            <span class="badge rounded-pill {% if anamnese.total_exames > 0 %}bg-success{% else %}bg-secondary{% endif %}">
+                                {{ anamnese.total_exames }} exames
                             </span>
-                            {% else %}
-                            <span class="badge bg-light text-muted border rounded-pill px-3">Sem Exame Físico</span>
-                            {% endif %}
-                            </a>
                         </td>
                         <td class="text-center">
-                            <div class="btn-group gap-1">
-                                <a href="{% url 'cadastro_exame_fisico' %}?vinculo={{ anamnese.id }}" class="btn btn-sm btn-outline-info rounded-circle" title="Adicionar Exame Físico">
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="{% url 'editar_anamnese' anamnese.id %}" class="btn btn-sm btn-outline-primary rounded-circle" title="Editar">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <a href="/exame-fisico/novo/?vinculo={{ anamnese.id }}" class="btn btn-sm btn-outline-success rounded-circle" title="Exame Físico">
                                     <i class="bi bi-clipboard-pulse"></i>
                                 </a>
-
-                                <a href="{% url 'editar_anamnese' anamnese.id %}" 
-                                   class="btn btn-sm btn-outline-primary rounded-circle" title="Editar">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-
-                                <a href="{% url 'gerar_pdf_anamnese' anamnese.id %}" target="_blank" class="btn btn-sm btn-outline-danger rounded-circle" title="Gerar PDF">
+                                <a href="{% url 'gerar_pdf_anamnese' anamnese.id %}" target="_blank" class="btn btn-sm btn-outline-dark rounded-circle" title="Gerar PDF">
                                     <i class="bi bi-file-earmark-pdf"></i>
                                 </a>
-
-                                <button type="button" class="btn btn-sm btn-outline-dark rounded-circle" 
-                                        data-bs-toggle="modal" data-bs-target="#modalExcluir{{ anamnese.id }}" title="Excluir">
+                                <button type="button" class="btn btn-sm btn-outline-danger rounded-circle"
+                                        onclick="prepararExclusao('{{ anamnese.id }}', '{{ anamnese.paciente.nome|escapejs }}')">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </div>
                         </td>
                     </tr>
-
-                    <div class="modal fade" id="modalExcluir{{ anamnese.id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content border-0 shadow-lg card-custom">
-                                <div class="modal-header bg-light border-0">
-                                    <h5 class="modal-title fw-bold text-danger">Confirmar Exclusão</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body text-center p-4">
-                                    <i class="bi bi-exclamation-octagon text-danger display-4 mb-3"></i>
-                                    <p class="fs-5">Deseja excluir permanentemente a anamnese de <br><strong>{{ anamnese.nome }}</strong>?</p>
-                                    
-                                    {% if anamnese.exames_fisicos.exists %}
-                                        <div class="alert alert-warning border-0 rounded-4 small">
-                                            <i class="bi bi-shield-lock-fill me-2"></i>
-                                            <strong>Bloqueado:</strong> Existem {{ anamnese.exames_fisicos.count }} exames físicos vinculados. 
-                                            Para excluir esta anamnese, você deve remover os exames primeiro.
-                                        </div>
-                                    {% endif %}
-                                </div>
-                                <div class="modal-footer border-0 justify-content-center pb-4">
-                                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
-                                    
-                                    {% if not anamnese.exames_fisicos.exists %}
-                                        <a href="{% url 'excluir_anamnese' anamnese.id %}" class="btn btn-danger rounded-pill px-4 fw-bold">Confirmar Exclusão</a>
-                                    {% else %}
-                                        <button class="btn btn-secondary rounded-pill px-4" disabled>Exclusão Bloqueada</button>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     {% empty %}
                     <tr>
-                        <td colspan="4" class="text-center py-5 text-muted">
-                            <i class="bi bi-folder-x display-1 mb-3 d-block"></i>
-                            <p class="fs-5">Nenhum prontuário encontrado.</p>
-                            <a href="{% url 'cadastro_anamnese' %}" class="btn btn-sm btn-primary rounded-pill">Cadastrar o primeiro</a>
-                        </td>
+                        <td colspan="5" class="text-center py-5 text-muted">Nenhum registro encontrado.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -136,10 +111,50 @@
     </div>
 </div>
 
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-danger text-white border-0">
+                <h5 class="modal-title fw-bold" id="confirmDeleteModalLabel">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Confirmar Exclusão
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <p class="fs-5 mb-1">Deseja realmente excluir o prontuário de:</p>
+                <h4 class="fw-bold text-dark" id="deletePatientName"></h4>
+                <p class="text-muted small">Esta ação é permanente e não poderá ser desfeita.</p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center pb-4">
+                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                <a href="#" id="confirmDeleteBtn" class="btn btn-danger rounded-pill px-4 shadow-sm">Sim, Excluir Agora</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Função para preparar o modal de exclusão
+    function prepararExclusao(id, nome) {
+        document.getElementById('deletePatientName').innerText = nome;
+        const urlExclusao = "/anamnese/excluir/" + id + "/";
+        document.getElementById('confirmDeleteBtn').setAttribute('href', urlExclusao);
+        var myModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+        myModal.show();
+    }
+
+    // Auto-fechamento das mensagens após 3 segundos
+    setTimeout(function() {
+        var alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function(alert) {
+            var bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        });
+    }, 3000);
+</script>
+
 <style>
-    .table thead th { font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
-    .btn-outline-info:hover { color: white !important; }
     .card-custom { border-radius: 1rem; }
-    .btn-group .btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0; }
+    .rounded-circle { width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
 </style>
 {% endblock %}

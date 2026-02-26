@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold">Escolha seu plano MedTools</h1>
+        <p class="text-muted">Acesse flashcards e ferramentas exclusivas agora mesmo.</p>
+    </div>
+
+    <div class="row justify-content-center gap-4">
+        <div class="col-md-5 card shadow-sm border-0 p-4" style="border-top: 5px solid #0d6efd !important;">
+            <div class="text-center">
+                <i class="bi bi-credit-card text-primary fs-1"></i>
+                <h3 class="fw-bold mt-2">Assinatura Mensal</h3>
+                <p class="text-muted small">Cobrança automática todo mês</p>
+                <div class="display-5 my-3">R$ 49,90<span class="fs-6 text-muted">/mês</span></div>
+            </div>
+            <ul class="list-unstyled my-4">
+                <li><i class="bi bi-check2 text-success me-2"></i> Renovação automática</li>
+                <li><i class="bi bi-check2 text-success me-2"></i> Cancele quando quiser</li>
+            </ul>
+            <a href="{{ init_point_assinatura }}" class="btn btn-primary w-100 rounded-pill fw-bold py-2">
+                Assinar com Cartão
+            </a>
+        </div>
+
+        <div class="col-md-5 card shadow-sm border-0 p-4" style="border-top: 5px solid #198754 !important;">
+            <div class="text-center">
+                <i class="bi bi-qr-code-scan text-success fs-1"></i>
+                <h3 class="fw-bold mt-2">Pagamento Único</h3>
+                <p class="text-muted small">Acesso por 30 dias (sem renovação)</p>
+                <div class="display-5 my-3">R$ 49,90<span class="fs-6 text-muted">/mês</span></div>
+            </div>
+            <ul class="list-unstyled my-4">
+                <li><i class="bi bi-check2 text-success me-2"></i> Liberação instantânea</li>
+                <li><i class="bi bi-check2 text-success me-2"></i> Sem compromisso mensal</li>
+            </ul>
+            <a href="{{ init_point_pix }}" class="btn btn-outline-success w-100 rounded-pill fw-bold py-2">
+                Pagar com Pix
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

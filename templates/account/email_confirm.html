@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load account %}
+
+{% block title %}Confirmar E-mail - MedTools{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-md-6 col-lg-5 text-center">
+        <div class="card card-custom p-4 p-md-5 shadow-sm border-0">
+            <div class="mb-4">
+                <i class="bi bi-shield-check text-success" style="font-size: 4rem;"></i>
+            </div>
+
+            <h2 class="fw-bold">Confirmar E-mail</h2>
+
+            {% if confirmation %}
+                {% user_display confirmation.email_address.user as user_display %}
+                <p class="text-muted mt-3">
+                    Olá, <strong>{{ user_display }}</strong>! <br>
+                    Clique no botão abaixo para confirmar que este é o seu endereço de e-mail e ativar sua conta no <strong>MedTools</strong>.
+                </p>
+
+                <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold mt-4 shadow-sm">
+                        Confirmar Agora
+                    </button>
+                </form>
+            {% else %}
+                <div class="alert alert-warning mt-4">
+                    <p class="mb-0">Este link de confirmação expirou ou é inválido.</p>
+                </div>
+                <a href="{% url 'account_email' %}" class="btn btn-outline-secondary rounded-pill mt-3">
+                    Solicitar novo link
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

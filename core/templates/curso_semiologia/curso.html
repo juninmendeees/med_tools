@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Estilização da Sidebar de Aulas */
+    .sidebar-curso {
+        max-height: 80vh;
+        overflow-y: auto;
+        border-radius: 12px;
+    }
+    .list-group-item.active {
+        background-color: #4e73df;
+        border-color: #4e73df;
+    }
+    .concluida-icon {
+        color: #1cc88a;
+    }
+    .pendente-icon {
+        color: #dee2e6;
+    }
+    /* Estilo do Player */
+    .video-container {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .btn-complementar {
+        transition: transform 0.2s;
+        border-radius: 8px;
+    }
+    .btn-complementar:hover {
+        transform: translateY(-2px);
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-transparent p-0 mb-1">
+                        <li class="breadcrumb-item"><a href="#">Cursos</a></li>
+                        <li class="breadcrumb-item active">{{ aula.modulo.titulo }}</li>
+                    </ol>
+                </nav>
+                <h2 class="h3 font-weight-bold text-gray-800">{{ aula.titulo }}</h2>
+            </div>
+            <a href="{% url 'marcar_concluida' aula.id %}" class="btn btn-success shadow-sm">
+                <i class="fas fa-check"></i> Marcar como Concluída
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 col-xl-9 mb-4">
+            <div class="video-container bg-black mb-4">
+                <div class="embed-responsive embed-responsive-16by9">
+                    <iframe class="embed-responsive-item" 
+                            src="https://www.youtube.com/embed/{{ aula.video_url }}" 
+                            allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <div class="row text-center">
+                <div class="col-md-4 mb-2">
+                    <a href="{% url 'banco_questoes' %}?categoria={{ aula.categoria_relacionada }}" 
+                       class="btn btn-white btn-block shadow-sm py-3 btn-complementar">
+                        <i class="fas fa-edit text-info fa-lg mb-2 d-block"></i>
+                        <span class="font-weight-bold">Caderno de Questões</span>
+                    </a>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <button class="btn btn-white btn-block shadow-sm py-3 btn-complementar" 
+                            data-toggle="modal" data-target="#modalGlossario">
+                        <i class="fas fa-book text-secondary fa-lg mb-2 d-block"></i>
+                        <span class="font-weight-bold">Glossário</span>
+                    </button>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <a href="{% url 'estudo_flashcards' %}?categoria={{ aula.categoria_relacionada }}" 
+                       class="btn btn-white btn-block shadow-sm py-3 btn-complementar">
+                        <i class="fas fa-bolt text-warning fa-lg mb-2 d-block"></i>
+                        <span class="font-weight-bold">Flashcards</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-xl-3">
+            <div class="card shadow-sm sidebar-curso border-0">
+                <div class="card-header bg-white py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Conteúdo do Curso</h6>
+                </div>
+                <div class="accordion" id="accordionCurso">
+                    {% for modulo in modulos %}
+                    <div class="border-bottom">
+                        <div class="p-3 bg-light" id="heading{{ modulo.id }}" 
+                             style="cursor: pointer;" data-toggle="collapse" data-target="#collapse{{ modulo.id }}">
+                            <span class="small font-weight-bold text-uppercase text-muted">Módulo {{ modulo.ordem }}</span>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="font-weight-bold text-gray-800">{{ modulo.titulo }}</span>
+                                <i class="fas fa-chevron-down fa-xs"></i>
+                            </div>
+                        </div>
+
+                        <div id="collapse{{ modulo.id }}" class="collapse {% if modulo == aula.modulo %}show{% endif %}" 
+                             data-parent="#accordionCurso">
+                            <div class="list-group list-group-flush">
+                                {% for a in modulo.aulas.all %}
+                                <a href="{% url 'visualizacao_aula' a.id %}" 
+                                   class="list-group-item list-group-item-action border-0 px-4 {% if a.id == aula.id %}active{% endif %}">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="small">
+                                            <i class="fas fa-play-circle mr-2"></i> {{ a.titulo }}
+                                        </div>
+                                        {% if a.id in aulas_concluidas %}
+                                            <i class="fas fa-check-circle concluida-icon"></i>
+                                        {% else %}
+                                            <i class="far fa-circle pendente-icon"></i>
+                                        {% endif %}
+                                    </div>
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalGlossario" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title font-weight-bold">📚 Glossário da Aula</h5>
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <div class="modal-body p-4">
+                {% for termo, definicao in aula.glossario_json.items %}
+                    <div class="mb-3">
+                        <h6 class="text-primary font-weight-bold mb-1">{{ termo }}</h6>
+                        <p class="text-muted">{{ definicao }}</p>
+                    </div>
+                {% empty %}
+                    <p class="text-center text-muted">Nenhum termo cadastrado para esta aula.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

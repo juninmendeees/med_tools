@@ -32,187 +32,273 @@
 </head>
 <body>
 
-    <div class="header">
-        <div class="header-left">
-            <h1>MedTools</h1>
-            <small>Sistema de Apoio à Decisão Clínica | Prontuário Eletrônico</small>
-        </div>
-        <div style="text-align: right;">
-            <span class="label">Paciente</span>
-            <span class="value" style="font-size: 11pt; font-weight: bold;">{{ anamnese.nome|upper }}</span>
-            <span class="label" style="margin-top: 5px;">ID Prontuário</span>
-            <span class="value">#{{ anamnese.id }} | Emissão: {{ data_impressao|date:"d/m/Y H:i" }}</span>
-        </div>
+<div class="header">
+    <div class="header-left">
+        <h1>MedTools</h1>
+        <small>Sistema de Apoio à Decisão Clínica | Prontuário Eletrônico</small>
     </div>
+    <div style="text-align: right;">
+        <span class="label">Paciente</span>
+        <span class="value" style="font-size: 11pt; font-weight: bold;">{{ paciente.nome|upper }}</span>
+        <span class="label" style="margin-top: 5px;">ID Prontuário</span>
+        <span class="value">#{{ anamnese.id }} | Emissão: {{ data_impressao|date:"d/m/Y H:i" }}</span>
+    </div>
+</div>
 
-    <div class="section-title">1. Identificação e Dados Sociais</div>
-    <div class="data-grid">
-        <div class="field"><span class="label">Idade</span><span class="value">{{ anamnese.idade }} anos</span></div>
-        <div class="field"><span class="label">Sexo</span><span class="value">{{ anamnese.get_sexo_display|default:"" }}</span></div>
-        <div class="field"><span class="label">Cor/Etnia</span><span class="value">{{ anamnese.cor_etnia|default:"" }}</span></div>
-        <div class="field"><span class="label">Estado Civil</span><span class="value">{{ anamnese.estado_civil|default:"" }}</span></div>
+<div class="section-title">1. Identificação e Dados Sociais</div>
+<div class="data-grid">
+    <div class="field"><span class="label">Idade</span><span class="value">{{ idade|default:"-" }} anos</span></div>
+    <div class="field"><span class="label">Sexo</span><span
+            class="value">{{ paciente.get_sexo_display|default:"-" }}</span></div>
+    <div class="field"><span class="label">Cor/Etnia</span><span
+            class="value">{{ paciente.cor_etnia|default:"-" }}</span></div>
+    <div class="field"><span class="label">Estado Civil</span><span class="value">{{ paciente.estado_civil|default:"-" }}</span>
     </div>
-    <div class="data-grid">
-        <div class="field"><span class="label">Profissão</span><span class="value">{{ anamnese.profissao|default:"" }}</span></div>
-        <div class="field"><span class="label">Local de Trabalho</span><span class="value">{{ anamnese.local_trabalho|default:"" }}</span></div>
-        <div class="field"><span class="label">Naturalidade</span><span class="value">{{ anamnese.naturalidade|default:"" }}</span></div>
-        <div class="field"><span class="label">Residência</span><span class="value">{{ anamnese.residencia|default:"" }}</span></div>
+</div>
+<div class="data-grid">
+    <div class="field"><span class="label">Profissão</span><span
+            class="value">{{ paciente.profissao|default:"" }}</span></div>
+    <div class="field"><span class="label">Local de Trabalho</span><span class="value">{{ paciente.local_trabalho|default:"" }}</span>
     </div>
+    <div class="field"><span class="label">Naturalidade</span><span
+            class="value">{{ paciente.naturalidade|default:"" }}</span></div>
+    <div class="field"><span class="label">Residência</span><span
+            class="value">{{ paciente.residencia|default:"" }}</span></div>
+</div>
 
-    <div class="section-title">2. Queixa Principal e HMA</div>
+<div class="section-title">2. Queixa Principal e HMA</div>
+<div class="text-block">
+    <span class="label">Queixa Principal (QP)</span>
+    <div class="value">{{ anamnese.queixa_principal|default:"" }}</div>
+</div>
+<div class="text-block">
+    <span class="label">História da Moléstia Atual (HMA)</span>
+    <div class="value" style="text-align: justify;">{{ anamnese.hma|default:"" }}</div>
+</div>
+
+<div class="section-title">3. Interrogatório Sistemático (IS)</div>
+<div class="data-grid">
+    <div class="field"><span class="label">Sintomas Gerais</span><span class="value">{{ anamnese.is_geral|default:"Sem queixas" }}</span>
+    </div>
+    <div class="field"><span class="label">Cabeça/Pescoço</span><span class="value">{{ anamnese.is_cabeca_pescoco|default:"" }}</span>
+    </div>
+</div>
+<div class="data-grid">
+    <div class="field"><span class="label">Cardiovascular</span><span class="value">{{ anamnese.is_cardiovascular|default:"" }}</span>
+    </div>
+    <div class="field"><span class="label">Respiratório</span><span class="value">{{ anamnese.is_respiratorio|default:"" }}</span>
+    </div>
+</div>
+
+<div class="section-title">4. Antecedentes Pessoais e Familiares</div>
+
+<div style="margin-bottom: 10px;">
+    <span class="label" style="color: #0d6efd; border-bottom: 1px solid #e7f1ff;">Fisiológicos</span>
+    <div class="data-grid">
+        <div class="field"><span class="label">Gestação/Nascimento</span><span class="value">{{ anamnese.gestacao_nascimento|default:"" }}</span>
+        </div>
+        <div class="field"><span class="label">Desenv. Neural</span><span class="value">{{ anamnese.desenvolvimento_neural|default:"" }}</span>
+        </div>
+    </div>
+    <div class="data-grid">
+        <div class="field"><span class="label">Puberdade</span><span
+                class="value">{{ anamnese.puberdade|default:"" }}</span></div>
+        <div class="field"><span class="label">Menarca</span><span class="value">{{ anamnese.menarca_idade|default:" 0" }} anos</span>
+        </div>
+        <div class="field"><span class="label">Menopausa</span><span class="value">{{ anamnese.menopausa_idade|default:"0" }} anos</span>
+        </div>
+    </div>
+    <div class="data-grid">
+        <div class="field"><span class="label">Sexarca</span><span class="value">{{ anamnese.sexarca_idade|default:"0" }} anos</span>
+        </div>
+        <div class="field"><span class="label">Orientação Sexual</span><span class="value">{{ anamnese.orientacao_sexual|default:"Não Informada" }}</span>
+        </div>
+    </div>
+</div>
+
+<div style="margin-bottom: 10px;">
+    <span class="label" style="color: #0d6efd; border-bottom: 1px solid #e7f1ff;">Patológicos</span>
+    <div class="data-grid">
+        <div class="field"><span class="label">Doenças Infância</span><span class="value">{{ anamnese.doencas_infancia|default:"" }}</span>
+        </div>
+        <div class="field"><span class="label">Traumas</span><span
+                class="value">{{ anamnese.traumas|default:"" }}</span></div>
+        <div class="field"><span class="label">Alergias</span><span
+                class="value">{{ anamnese.alergias|default:"" }}</span></div>
+    </div>
     <div class="text-block">
-        <span class="label">Queixa Principal (QP)</span>
-        <div class="value">{{ anamnese.queixa_principal|default:"" }}</div>
+        <span class="label">Doenças Crônicas / Cirurgias / Medicamentos</span>
+        <div class="value">
+            <strong>Crônicas:</strong> {{ anamnese.doencas_cronicas|default:"Negativas" }}<br>
+            <strong>Cirurgias/Transfusões:</strong> {{ anamnese.cirurgias_transfusoes|default:"Negativas" }}<br>
+            <strong>Medicamentos:</strong> {{ anamnese.medicamentos|default:"Nenhum" }}
+        </div>
+    </div>
+</div>
+
+<div style="margin-bottom: 10px;">
+    <span class="label" style="color: #0d6efd; border-bottom: 1px solid #e7f1ff;">História Obstétrica e Familiar</span>
+    <div class="data-grid">
+        <div class="field"><span class="label">Gesta / Para / Aborto</span><span class="value">{{ anamnese.gesta|default:"0" }} / {{ anamnese.para|default:"0" }} / {{ anamnese.aborto|default:"0" }}</span>
+        </div>
+        <div class="field"><span class="label">Vacinas</span><span
+                class="value">{{ anamnese.vacinas|default:"" }}</span></div>
     </div>
     <div class="text-block">
-        <span class="label">História da Moléstia Atual (HMA)</span>
-        <div class="value" style="text-align: justify;">{{ anamnese.hma|default:"" }}</div>
+        <span class="label">Antecedentes Familiares</span>
+        <div class="value">{{ anamnese.antecedentes_familiares|default:"Sem particularidades" }}</div>
     </div>
+</div>
 
-    <div class="section-title">3. Interrogatório Sistemático (IS)</div>
-    <div class="data-grid">
-        <div class="field"><span class="label">Sintomas Gerais</span><span class="value">{{ anamnese.is_geral|default:"Sem queixas" }}</span></div>
-        <div class="field"><span class="label">Cabeça/Pescoço</span><span class="value">{{ anamnese.is_cabeca_pescoco|default:"" }}</span></div>
+<div class="section-title">5. Hábitos e Condições de Vida</div>
+
+<div class="data-grid">
+    <div class="field"><span class="label">Alimentação/Peso</span><span class="value">{{ anamnese.alimentacao_peso|default:"" }}</span>
     </div>
-    <div class="data-grid">
-        <div class="field"><span class="label">Cardiovascular</span><span class="value">{{ anamnese.is_cardiovascular|default:"" }}</span></div>
-        <div class="field"><span class="label">Respiratório</span><span class="value">{{ anamnese.is_respiratorio|default:"" }}</span></div>
+    <div class="field"><span class="label">Ativ. Física</span><span class="value">{{ anamnese.atividades_fisicas|default:"" }}</span>
     </div>
+</div>
 
-    <div class="section-title">4. Antecedentes Pessoais e Familiares</div>
-
-    <div style="margin-bottom: 10px;">
-        <span class="label" style="color: #0d6efd; border-bottom: 1px solid #e7f1ff;">Fisiológicos</span>
-        <div class="data-grid">
-            <div class="field"><span class="label">Gestação/Nascimento</span><span class="value">{{ anamnese.gestacao_nascimento|default:"" }}</span></div>
-            <div class="field"><span class="label">Desenv. Neural</span><span class="value">{{ anamnese.desenvolvimento_neural|default:"" }}</span></div>
-        </div>
-        <div class="data-grid">
-            <div class="field"><span class="label">Puberdade</span><span class="value">{{ anamnese.puberdade|default:"" }}</span></div>
-            <div class="field"><span class="label">Menarca</span><span class="value">{{ anamnese.menarca_idade|default:" 0" }} anos</span></div>
-            <div class="field"><span class="label">Menopausa</span><span class="value">{{ anamnese.menopausa_idade|default:"0" }} anos</span></div>
-        </div>
-        <div class="data-grid">
-            <div class="field"><span class="label">Sexarca</span><span class="value">{{ anamnese.sexarca_idade|default:"0" }} anos</span></div>
-            <div class="field"><span class="label">Orientação Sexual</span><span class="value">{{ anamnese.orientacao_sexual|default:"Não Informada" }}</span></div>
-        </div>
+<div class="data-grid">
+    <div class="field"><span class="label">Tabagismo</span><span
+            class="value">{{ anamnese.tabaco|default:"Negativo" }}</span></div>
+    <div class="field"><span class="label">Alcoolismo</span><span
+            class="value">{{ anamnese.alcool|default:"Negativo" }}</span></div>
+    <div class="field"><span class="label">Drogas</span><span class="value">{{ anamnese.outras_drogas|default:"Negativo" }}</span>
     </div>
+</div>
 
-    <div style="margin-bottom: 10px;">
-        <span class="label" style="color: #0d6efd; border-bottom: 1px solid #e7f1ff;">Patológicos</span>
+<div class="data-grid">
+    <div class="field"><span class="label">Vida Sexual</span><span class="value">{{ anamnese.atividade_sexual|default:"" }}</span>
+    </div>
+    <div class="field"><span class="label">Ocupações Antigas/Atuais</span><span class="value">{{ anamnese.ocupacoes|default:"" }}</span>
+    </div>
+</div>
+
+<div class="data-grid">
+    <div class="field"><span class="label">Moradia/Saneamento</span><span class="value">{{ anamnese.moradia_saneamento|default:"" }}</span>
+    </div>
+    <div class="field"><span class="label">Condições Econômicas</span><span class="value">{{ anamnese.condicoes_economicas|default:"" }}</span>
+    </div>
+</div>
+
+<div class="data-grid">
+    <div class="field"><span class="label">Viagens</span><span class="value">{{ anamnese.viagens|default:"" }}</span>
+    </div>
+    <div class="field"><span class="label">Ajustamento Familiar</span><span class="value">{{ anamnese.ajustamento_familiar|default:"" }}</span>
+    </div>
+    <div class="field"><span class="label">Contato Doentes</span><span class="value">{{ anamnese.contato_doentes|default:"" }}</span>
+    </div>
+</div>
+
+<div class="section-title">Exames Físicos Realizados</div>
+
+{% for exame in exames %}
+<div class="exame-card">
+    <div class="exame-header">
+        <span>{{ exame.get_tipo_exame_display|upper }}</span>
+        <span>Data: {{ exame.data_exame|date:"d/m/Y H:i" }}</span>
+    </div>
+    <div class="exame-body">
+
+        {% if exame.tipo_exame == 'geral' %}
         <div class="data-grid">
-            <div class="field"><span class="label">Doenças Infância</span><span class="value">{{ anamnese.doencas_infancia|default:"" }}</span></div>
-            <div class="field"><span class="label">Traumas</span><span class="value">{{ anamnese.traumas|default:"" }}</span></div>
-            <div class="field"><span class="label">Alergias</span><span class="value">{{ anamnese.alergias|default:"" }}</span></div>
-        </div>
-        <div class="text-block">
-            <span class="label">Doenças Crônicas / Cirurgias / Medicamentos</span>
-            <div class="value">
-                <strong>Crônicas:</strong> {{ anamnese.doencas_cronicas|default:"Negativas" }}<br>
-                <strong>Cirurgias/Transfusões:</strong> {{ anamnese.cirurgias_transfusoes|default:"Negativas" }}<br>
-                <strong>Medicamentos:</strong> {{ anamnese.medicamentos|default:"Nenhum" }}
+            <div class="field"><span class="label">Estado Geral</span><span class="value">{{ exame.estado_geral|default:"" }}</span>
+            </div>
+            <div class="field"><span class="label">Nível de Consciência</span><span class="value">{{ exame.nivel_consciencia|default:"" }}</span>
+            </div>
+            <div class="field"><span class="label">Fala e Linguagem</span><span class="value">{{ exame.fala_linguagem|default:"" }}</span>
             </div>
         </div>
-    </div>
-
-    <div style="margin-bottom: 10px;">
-        <span class="label" style="color: #0d6efd; border-bottom: 1px solid #e7f1ff;">História Obstétrica e Familiar</span>
         <div class="data-grid">
-            <div class="field"><span class="label">Gesta / Para / Aborto</span><span class="value">{{ anamnese.gesta|default:"0" }} / {{ anamnese.para|default:"0" }} / {{ anamnese.aborto|default:"0" }}</span></div>
-            <div class="field"><span class="label">Vacinas</span><span class="value">{{ anamnese.vacinas|default:"" }}</span></div>
+            <div class="field"><span class="label">Peso</span><span
+                    class="value">{{ exame.peso|default:"--" }} kg</span></div>
+            <div class="field"><span class="label">Altura</span><span
+                    class="value">{{ exame.altura|default:"--" }} cm</span></div>
+            <div class="field"><span class="label">IMC</span><span class="value">{{ exame.imc|default:"--" }}</span>
+            </div>
+            <div class="field"><span class="label">Temperatura</span><span class="value">{{ exame.temperatura|default:"--" }} °C</span>
+            </div>
         </div>
+        <div class="data-grid">
+            <div class="field"><span class="label">Pele e Anexos</span><span class="value">{{ exame.pele_anexos|default:"" }}</span>
+            </div>
+            <div class="field"><span class="label">Mucosas</span><span class="value">{{ exame.get_mucosas_display|default:"" }}</span>
+            </div>
+            <div class="field"><span class="label">Edema</span><span class="value">{{ exame.get_edema_display|default:"" }}</span>
+            </div>
+        </div>
+
+        {% elif exame.tipo_exame == 'nutricional' %}
+        <div class="data-grid">
+            <div class="field"><span class="label">Peso Habitual</span><span class="value">{{ exame.peso_habitual|default:"--" }} kg</span>
+            </div>
+            <div class="field"><span class="label">Perda 6 Meses</span><span class="value">{{ exame.get_perdeu_peso_6_meses_display|default:"" }} ({{ exame.percentual_perda|default:"0" }}%)</span>
+            </div>
+            <div class="field"><span class="label">Dieta</span><span class="value">{{ exame.get_dieta_tipo_display|default:"" }}</span>
+            </div>
+        </div>
+        <div class="data-grid">
+            <div class="field"><span class="label">Perda Gordura Subcutânea (0-3)</span><span class="value">{{ exame.perda_gordura_subcutanea|default:"0" }}</span>
+            </div>
+            <div class="field"><span class="label">Perda Muscular (0-3)</span><span class="value">{{ exame.perda_muscular|default:"0" }}</span>
+            </div>
+            <div class="field"><span class="label">Ascite / Edema (0-3)</span><span class="value">{{ exame.ascite|default:"0" }}</span>
+            </div>
+        </div>
+        <div class="text-block" style="background: #e9f7ef; border-color: #badbcc; margin-top: 5px;">
+            <span class="label" style="color: #0f5132;">Classificação Subjetiva Global (ASG)</span>
+            <strong style="color: #0f5132;">{{ exame.get_classificacao_nutricional_display|upper }}</strong>
+        </div>
+
+        {% elif exame.tipo_exame == 'psiquico' %}
+        <div class="exame-box" style="margin-top: 20px; border-left: 4px solid #007bff; padding-left: 15px;">
+            <h3 style="color: #007bff; text-transform: uppercase; font-size: 14px; margin-bottom: 10px;">
+                Exame Psíquico e Condições Emocionais
+            </h3>
+
+            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                <tr>
+                    <td style="padding: 5px; width: 50%;"><strong>Impressão Geral:</strong> {{ exame.impressao_geral_psic|default:"N/A" }} </td>
+                    <td style="padding: 5px; width: 50%;"><strong>Consciência:</strong> {{exame.consciencia_psic|default:"N/A" }}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 5px;"><strong>Orientação:</strong> {{ exame.orientacao_psic|default:"N/A" }}</td>
+                    <td style="padding: 5px;"><strong>Atenção/Memória:</strong> {{ exame.atencao_psic|default:"N/A" }}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 5px;"><strong>Pensamento/Linguagem:</strong> {{exame.pensamento_psic|default:"N/A" }} </td>
+                    <td style="padding: 5px;"><strong>Afetividade/Humor:</strong> {{exame.afetividade_humor_psic|default:"N/A" }} </td>
+                </tr>
+                <tr>
+                    <td style="padding: 5px;"><strong>Sensopercepção:</strong> {{exame.sensopercepcao_psic|default:"Sem alterações" }} </td>
+                </tr>
+                <tr>
+                    <td style="padding: 5px;"><strong>Psicomotricidade:</strong> {{exame.psicomotricidade_psic|default:"Sem alterações" }} </td>
+                </tr>
+                <tr>
+                    <td style="padding: 5px;"><strong>Vontade:</strong> {{exame.vontade_psic|default:"Sem alterações" }} </td>
+                </tr>
+                <tr>
+                    <td style="padding: 5px;"><strong>Inteligência:</strong> {{exame.inteligencia_psic|default:"Sem alterações" }} </td>
+                </tr>
+            </table>
+        </div>
+
+
+        {% else %}
         <div class="text-block">
-            <span class="label">Antecedentes Familiares</span>
-            <div class="value">{{ anamnese.antecedentes_familiares|default:"Sem particularidades" }}</div>
+            <span class="label">Descrição do Exame</span>
+            <div class="value" style="white-space: pre-wrap;">{{ exame.descricao_exame|default:"" }}</div>
         </div>
+        {% endif %}
     </div>
+</div>
+{% endfor %}
 
-    <div class="section-title">5. Hábitos e Condições de Vida</div>
-
-    <div class="data-grid">
-        <div class="field"><span class="label">Alimentação/Peso</span><span class="value">{{ anamnese.alimentacao_peso|default:"" }}</span></div>
-        <div class="field"><span class="label">Ativ. Física</span><span class="value">{{ anamnese.atividades_fisicas|default:"" }}</span></div>
-    </div>
-
-    <div class="data-grid">
-        <div class="field"><span class="label">Tabagismo</span><span class="value">{{ anamnese.tabaco|default:"Negativo" }}</span></div>
-        <div class="field"><span class="label">Alcoolismo</span><span class="value">{{ anamnese.alcool|default:"Negativo" }}</span></div>
-        <div class="field"><span class="label">Drogas</span><span class="value">{{ anamnese.outras_drogas|default:"Negativo" }}</span></div>
-    </div>
-
-    <div class="data-grid">
-        <div class="field"><span class="label">Vida Sexual</span><span class="value">{{ anamnese.atividade_sexual|default:"" }}</span></div>
-        <div class="field"><span class="label">Ocupações Antigas/Atuais</span><span class="value">{{ anamnese.ocupacoes|default:"" }}</span></div>
-    </div>
-
-    <div class="data-grid">
-        <div class="field"><span class="label">Moradia/Saneamento</span><span class="value">{{ anamnese.moradia_saneamento|default:"" }}</span></div>
-        <div class="field"><span class="label">Condições Econômicas</span><span class="value">{{ anamnese.condicoes_economicas|default:"" }}</span></div>
-    </div>
-
-    <div class="data-grid">
-        <div class="field"><span class="label">Viagens</span><span class="value">{{ anamnese.viagens|default:"" }}</span></div>
-        <div class="field"><span class="label">Ajustamento Familiar</span><span class="value">{{ anamnese.ajustamento_familiar|default:"" }}</span></div>
-        <div class="field"><span class="label">Contato Doentes</span><span class="value">{{ anamnese.contato_doentes|default:"" }}</span></div>
-    </div>
-
-    <div class="section-title">Exames Físicos Realizados</div>
-
-    {% for exame in exames %}
-    <div class="exame-card">
-        <div class="exame-header">
-            <span>{{ exame.get_tipo_exame_display|upper }}</span>
-            <span>Data: {{ exame.data_exame|date:"d/m/Y H:i" }}</span>
-        </div>
-        <div class="exame-body">
-
-            {% if exame.tipo_exame == 'geral' %}
-                <div class="data-grid">
-                    <div class="field"><span class="label">Estado Geral</span><span class="value">{{ exame.estado_geral|default:"" }}</span></div>
-                    <div class="field"><span class="label">Nível de Consciência</span><span class="value">{{ exame.nivel_consciencia|default:"" }}</span></div>
-                    <div class="field"><span class="label">Fala e Linguagem</span><span class="value">{{ exame.fala_linguagem|default:"" }}</span></div>
-                </div>
-                <div class="data-grid">
-                    <div class="field"><span class="label">Peso</span><span class="value">{{ exame.peso|default:"--" }} kg</span></div>
-                    <div class="field"><span class="label">Altura</span><span class="value">{{ exame.altura|default:"--" }} cm</span></div>
-                    <div class="field"><span class="label">IMC</span><span class="value">{{ exame.imc|default:"--" }}</span></div>
-                    <div class="field"><span class="label">Temperatura</span><span class="value">{{ exame.temperatura|default:"--" }} °C</span></div>
-                </div>
-                <div class="data-grid">
-                    <div class="field"><span class="label">Pele e Anexos</span><span class="value">{{ exame.pele_anexos|default:"" }}</span></div>
-                    <div class="field"><span class="label">Mucosas</span><span class="value">{{ exame.get_mucosas_display|default:"" }}</span></div>
-                    <div class="field"><span class="label">Edema</span><span class="value">{{ exame.get_edema_display|default:"" }}</span></div>
-                </div>
-
-            {% elif exame.tipo_exame == 'nutricional' %}
-                <div class="data-grid">
-                    <div class="field"><span class="label">Peso Habitual</span><span class="value">{{ exame.peso_habitual|default:"--" }} kg</span></div>
-                    <div class="field"><span class="label">Perda 6 Meses</span><span class="value">{{ exame.get_perdeu_peso_6_meses_display|default:"" }} ({{ exame.percentual_perda|default:"0" }}%)</span></div>
-                    <div class="field"><span class="label">Dieta</span><span class="value">{{ exame.get_dieta_tipo_display|default:"" }}</span></div>
-                </div>
-                <div class="data-grid">
-                    <div class="field"><span class="label">Perda Gordura Subcutânea (0-3)</span><span class="value">{{ exame.perda_gordura_subcutanea|default:"0" }}</span></div>
-                    <div class="field"><span class="label">Perda Muscular (0-3)</span><span class="value">{{ exame.perda_muscular|default:"0" }}</span></div>
-                    <div class="field"><span class="label">Ascite / Edema (0-3)</span><span class="value">{{ exame.ascite|default:"0" }}</span></div>
-                </div>
-                <div class="text-block" style="background: #e9f7ef; border-color: #badbcc; margin-top: 5px;">
-                    <span class="label" style="color: #0f5132;">Classificação Subjetiva Global (ASG)</span>
-                    <strong style="color: #0f5132;">{{ exame.get_classificacao_nutricional_display|upper }}</strong>
-                </div>
-
-            {% else %}
-                <div class="text-block">
-                    <span class="label">Descrição do Exame</span>
-                    <div class="value" style="white-space: pre-wrap;">{{ exame.descricao_exame|default:"" }}</div>
-                </div>
-            {% endif %}
-        </div>
-    </div>
-    {% endfor %}
-
-    <div class="footer">
-        Este documento é um registro médico eletrônico. Gerado por: {{ usuario_nome }} | MedTools v2.0
-    </div>
+<div class="footer">
+    Este documento é um registro médico eletrônico. Gerado por: {{ usuario_nome }} | MedTools v2.0
+</div>
 
 </body>
 </html>

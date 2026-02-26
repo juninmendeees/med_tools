@@ -8,12 +8,12 @@
         <div class="col-md-11">
             <div class="card card-custom p-4 shadow-sm border-0">
                 <div class="d-flex align-items-center mb-4">
-                    <a href="{% url 'gerenciar_exames' anamnese.id %}" class="btn btn-light rounded-circle me-3"><i
+                    <a href="{% url 'selecionar_paciente_exame'%}" class="btn btn-light rounded-circle me-3"><i
                             class="bi bi-arrow-left"></i></a>
                     <div>
                         <h2 class="fw-bold text-primary mb-0">{% if exame %}Editar{% else %}Novo{% endif %} Exame
                             Físico</h2>
-                        <p class="text-muted mb-0">Paciente: <strong>{{ anamnese.nome }}</strong></p>
+                        <p class="text-muted mb-0">Paciente: <strong>{{ paciente.nome }}</strong> | CPF: {{paciente.cpf|default:"-" }}</strong></p>
                     </div>
                 </div>
 
@@ -25,9 +25,7 @@
                         <select class="form-select form-select-lg border-primary" name="tipo_exame" id="tipo_exame"
                                 onchange="alternarCampos()">
                             {% for valor, label in tipos_opcoes %}
-                            <option value="{{ valor }}" {% if exame.tipo_exame == valor %}selected{% elif not exame and
-                                    valor==
-                            'geral' %}selected{% endif %}>{{ label }}</option>
+                            <option value="{{ valor }}" {% if exame.tipo_exame == valor %}selected{% elif not exame and valor == 'geral' %}selected{% endif %}>{{ label }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -177,7 +175,7 @@
                                            oninput="calcularPerda()">
                                 </div>
                                 <div class="col-md-3">
-                                    <label class="form-label small fw-bold">Perda de peso nos últimos 6 meses?</label>
+                                    <label class="form-label small fw-bold">Perda de peso recente?</label>
                                     <select class="form-select" name="perdeu_peso_6_meses">
                                         <option value="nao" {% if exame.perdeu_peso_6_meses == 'nao' %}selected{% endif %}>Não</option>
                                         <option value="sim" {% if exame.perdeu_peso_6_meses == 'sim' %}selected{% endif %}>Sim</option>
@@ -316,13 +314,64 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div id="campos_psiquico" class="secao-exame d-none"> <div class="row g-3">
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <h5 class="text-primary fw-bold border-bottom pb-2">Avaliação Psíquica e Condições Emocionais</h5>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small">Impressão Geral <br>(Aspecto, fácies, expressão fisionômica)</label>
+                                    <textarea name="impressao_geral_psic" class="form-control bg-light" rows="2">{{ exame.impressao_geral_psic|default:'' }}</textarea>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small">Consciência <br>(Alerta, lúcido, confusão mental, torpor, comatoso)</label>
+                                    <textarea name="consciencia_psic" class="form-control bg-light" rows="2">{{ exame.consciencia_psic|default:'' }}</textarea>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small">Orientação <br>(Tempo e espaço, nome, idade, sexo, profissão)</label>
+                                    <textarea name="orientacao_psic" class="form-control bg-light" rows="2">{{ exame.orientacao_psic|default:'' }}</textarea>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small">Atenção e Memória <br>(Concentração, fatos recentes e antigos)</label>
+                                    <textarea name="atencao_psic" class="form-control bg-light" rows="2">{{ exame.atencao_psic|default:'' }}</textarea>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small">Pensamento e Linguagem <br>(Aceleração, delírios, afasia, mutismo)</label>
+                                    <textarea name="pensamento_psic" class="form-control bg-light" rows="2">{{ exame.pensamento_psic|default:'' }}</textarea>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small">Afetividade e Humor <br>(Tristeza, euforia, ansiedade, labilidade)</label>
+                                    <textarea name="afetividade_humor_psic" class="form-control bg-light" rows="2">{{ exame.afetividade_humor_psic|default:'' }}</textarea>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small">Sensopercepção <br>(Ilusões, alucinações)</label>
+                                    <input type="text" name="sensopercepcao_psic" class="form-control bg-light" value="{{ exame.sensopercepcao_psic|default:'' }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small">Psicomotricidade <br>(Agitação, tiques)</label>
+                                    <input type="text" name="psicomotricidade_psic" class="form-control bg-light" value="{{ exame.psicomotricidade_psic|default:'' }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small">Vontade <br>(Abulia, atos impulsivos)</label>
+                                    <input type="text" name="vontade_psic" class="form-control bg-light" value="{{ exame.vontade_psic|default:'' }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="py-4"></div>
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{% url 'gerenciar_exames' %}" class="btn btn-light rounded-pill px-4">Cancelar</a>
+                        <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow">Salvar Registro </button>
                     </div>
 
-                    <div class="d-flex justify-content-end gap-2">
-                        <a href="{% url 'gerenciar_exames' anamnese.id %}" class="btn btn-light rounded-pill px-4">Cancelar</a>
-                        <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow">Salvar Registro
-                        </button>
-                    </div>
                 </form>
             </div>
         </div>
@@ -330,19 +379,32 @@
 </div>
 
 <script>
-    function alternarCampos() {
-        const tipo = document.getElementById('tipo_exame').value;
-        document.querySelectorAll('.secao-exame').forEach(div => div.classList.add('d-none'));
+function alternarCampos() {
+    const tipo = document.getElementById('tipo_exame').value;
 
-        const mapeamento = {
-            'geral': 'campos-geral',
-            'nutricional': 'campos-nutricional',
-            'dor': 'campos-dor' // Novo mapeamento
-        };
+    // Esconde todas as seções que possuem a classe 'secao-exame'
+    document.querySelectorAll('.secao-exame').forEach(div => div.classList.add('d-none'));
 
-        const idMostrar = mapeamento[tipo] || 'campos-outros';
-        document.getElementById(idMostrar).classList.remove('d-none');
+    // Mapeamento exato entre o valor do SELECT e o ID da DIV no HTML
+    const mapeamento = {
+        'geral': 'campos-geral',
+        'nutricional': 'campos-nutricional',
+        'dor': 'campos-dor',
+        'pressao_arterial': 'campos-pressao',
+        'psiquico': 'campos_psiquico'
+    };
+
+    // Define qual ID mostrar. Se não estiver no mapa, usa 'campos-outros'
+    const idMostrar = mapeamento[tipo] || 'campos-outros';
+    const elemento = document.getElementById(idMostrar);
+
+    if (elemento) {
+        elemento.classList.remove('d-none');
     }
+}
+
+// Inicializa a visualização correta ao carregar a página (importante para edição)
+document.addEventListener('DOMContentLoaded', alternarCampos);
 
     // Atualiza o número da intensidade em tempo real
     document.getElementById('id_intensidade').addEventListener('input', function () {
