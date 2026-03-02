@@ -2,153 +2,177 @@
 
 {% block content %}
 <style>
-    /* Estilização da Sidebar de Aulas */
-    .sidebar-curso {
-        max-height: 80vh;
-        overflow-y: auto;
-        border-radius: 12px;
+    /* Reset de container para ocupar a tela toda com elegância */
+    .main-wrapper {
+        background-color: #f8f9fc;
+        min-height: 100vh;
     }
-    .list-group-item.active {
-        background-color: #4e73df;
-        border-color: #4e73df;
+
+    /* PLAYER DE VÍDEO: O segredo está no max-height e no aspect-ratio */
+    .video-column {
+        padding: 2rem !important;
     }
-    .concluida-icon {
-        color: #1cc88a;
-    }
-    .pendente-icon {
-        color: #dee2e6;
-    }
-    /* Estilo do Player */
-    .video-container {
-        border-radius: 15px;
+
+    .video-wrapper {
+        background-color: #000;
+        border-radius: 16px;
         overflow: hidden;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        /* Limita a largura para o vídeo não ficar "infinito" e baixo */
+        max-width: 1200px;
+        margin: 0 auto;
     }
-    .btn-complementar {
-        transition: transform 0.2s;
-        border-radius: 8px;
+
+    /* Forçamos a proporção 16:9 real do YouTube */
+    .video-container {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 ratio */
+        height: 0;
+        overflow: hidden;
     }
-    .btn-complementar:hover {
-        transform: translateY(-2px);
+
+    .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+
+    /* SIDEBAR: Estilo Udemy refinado */
+    .sidebar-curso {
+        background-color: #fff;
+        height: calc(100vh - 70px);
+        position: sticky;
+        top: 70px;
+        border-left: 1px solid #e3e6f0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e3e6f0;
+    }
+
+    .sidebar-content {
+        overflow-y: auto;
+        flex-grow: 1;
+    }
+
+    .aula-item {
+        padding: 1rem 1.5rem;
+        display: block;
+        color: #4e73df;
+        text-decoration: none;
+        border-bottom: 1px solid #f8f9fc;
+        transition: 0.2s;
+    }
+
+    .aula-item:hover { background-color: #f1f4ff; text-decoration: none; }
+    .aula-item.active {
+        background-color: #eef2ff;
+        border-left: 4px solid #4e73df;
+        font-weight: bold;
+    }
+
+    /* BOTÕES: Mantendo seu padrão MedTools */
+    .btn-action {
+        background: #fff;
+        border: 1px solid #e3e6f0;
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: 0.3s;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    }
+    .btn-action:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        border-color: #4e73df;
     }
 </style>
 
-<div class="container-fluid py-4">
-    <div class="row mb-4">
-        <div class="col-12 d-flex justify-content-between align-items-center">
-            <div>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb bg-transparent p-0 mb-1">
-                        <li class="breadcrumb-item"><a href="#">Cursos</a></li>
-                        <li class="breadcrumb-item active">{{ aula.modulo.titulo }}</li>
-                    </ol>
-                </nav>
-                <h2 class="h3 font-weight-bold text-gray-800">{{ aula.titulo }}</h2>
-            </div>
-            <a href="{% url 'marcar_concluida' aula.id %}" class="btn btn-success shadow-sm">
-                <i class="fas fa-check"></i> Marcar como Concluída
-            </a>
-        </div>
-    </div>
+<div class="container-fluid p-0 main-wrapper">
+    <div class="row no-gutters">
 
-    <div class="row">
-        <div class="col-lg-8 col-xl-9 mb-4">
-            <div class="video-container bg-black mb-4">
-                <div class="embed-responsive embed-responsive-16by9">
-                    <iframe class="embed-responsive-item" 
-                            src="https://www.youtube.com/embed/{{ aula.video_url }}" 
-                            allowfullscreen></iframe>
+        <div class="col-lg-8 col-xl-9 video-column">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 font-weight-bold text-gray-800">{{ aula.titulo }}</h1>
+                    <p class="text-muted mb-0">Curso de Semiologia Médica • Aula {{ aula.ordem }}</p>
+                </div>
+                <a href="{% url 'marcar_concluida' aula.id %}" class="btn btn-success px-4 shadow-sm">
+                    <i class="fas fa-check mr-2"></i>Concluir Aula
+                </a>
+            </div>
+
+            <div class="video-wrapper mb-5">
+                <div class="video-container">
+                    <iframe
+                        src="https://www.youtube.com/embed/{{ aula.video_url }}?rel=0&modestbranding=1"
+                        allowfullscreen>
+                    </iframe>
                 </div>
             </div>
 
-            <div class="row text-center">
-                <div class="col-md-4 mb-2">
-                    <a href="{% url 'banco_questoes' %}?categoria={{ aula.categoria_relacionada }}" 
-                       class="btn btn-white btn-block shadow-sm py-3 btn-complementar">
-                        <i class="fas fa-edit text-info fa-lg mb-2 d-block"></i>
-                        <span class="font-weight-bold">Caderno de Questões</span>
-                    </a>
+            <div class="row px-2">
+                <div class="col-md-4 mb-3">
+                    <div class="btn-action h-100">
+                        <i class="fas fa-edit text-primary fa-2x mb-3"></i>
+                        <h6 class="font-weight-bold text-dark mb-0">Caderno de Questões</h6>
+                        <small class="text-muted">Disponível em breve</small>
+                    </div>
                 </div>
-                <div class="col-md-4 mb-2">
-                    <button class="btn btn-white btn-block shadow-sm py-3 btn-complementar" 
-                            data-toggle="modal" data-target="#modalGlossario">
-                        <i class="fas fa-book text-secondary fa-lg mb-2 d-block"></i>
-                        <span class="font-weight-bold">Glossário</span>
-                    </button>
+                <div class="col-md-4 mb-3">
+                    <div class="btn-action h-100">
+                        <i class="fas fa-book text-info fa-2x mb-3"></i>
+                        <h6 class="font-weight-bold text-dark mb-0">Glossário</h6>
+                        <small class="text-muted">Disponível em breve</small>
+                    </div>
                 </div>
-                <div class="col-md-4 mb-2">
-                    <a href="{% url 'estudo_flashcards' %}?categoria={{ aula.categoria_relacionada }}" 
-                       class="btn btn-white btn-block shadow-sm py-3 btn-complementar">
-                        <i class="fas fa-bolt text-warning fa-lg mb-2 d-block"></i>
-                        <span class="font-weight-bold">Flashcards</span>
+                <div class="col-md-4 mb-3">
+                    <a href="{% url 'estudo_flashcards' %}?categoria={{ aula.categoria_relacionada }}" class="text-decoration-none h-100">
+                        <div class="btn-action h-100">
+                            <i class="fas fa-bolt text-warning fa-2x mb-3"></i>
+                            <h6 class="font-weight-bold text-dark mb-0">Flashcards</h6>
+                            <small class="text-primary">Praticar agora →</small>
+                        </div>
                     </a>
                 </div>
             </div>
         </div>
 
         <div class="col-lg-4 col-xl-3">
-            <div class="card shadow-sm sidebar-curso border-0">
-                <div class="card-header bg-white py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Conteúdo do Curso</h6>
-                </div>
-                <div class="accordion" id="accordionCurso">
-                    {% for modulo in modulos %}
-                    <div class="border-bottom">
-                        <div class="p-3 bg-light" id="heading{{ modulo.id }}" 
-                             style="cursor: pointer;" data-toggle="collapse" data-target="#collapse{{ modulo.id }}">
-                            <span class="small font-weight-bold text-uppercase text-muted">Módulo {{ modulo.ordem }}</span>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="font-weight-bold text-gray-800">{{ modulo.titulo }}</span>
-                                <i class="fas fa-chevron-down fa-xs"></i>
-                            </div>
-                        </div>
-
-                        <div id="collapse{{ modulo.id }}" class="collapse {% if modulo == aula.modulo %}show{% endif %}" 
-                             data-parent="#accordionCurso">
-                            <div class="list-group list-group-flush">
-                                {% for a in modulo.aulas.all %}
-                                <a href="{% url 'visualizacao_aula' a.id %}" 
-                                   class="list-group-item list-group-item-action border-0 px-4 {% if a.id == aula.id %}active{% endif %}">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="small">
-                                            <i class="fas fa-play-circle mr-2"></i> {{ a.titulo }}
-                                        </div>
-                                        {% if a.id in aulas_concluidas %}
-                                            <i class="fas fa-check-circle concluida-icon"></i>
-                                        {% else %}
-                                            <i class="far fa-circle pendente-icon"></i>
-                                        {% endif %}
-                                    </div>
-                                </a>
-                                {% endfor %}
-                            </div>
-                        </div>
+            <div class="sidebar-curso">
+                <div class="sidebar-header">
+                    <h6 class="font-weight-bold text-primary mb-2">Conteúdo do Curso</h6>
+                    <div class="progress" style="height: 6px; border-radius: 3px;">
+                        <div class="progress-bar bg-success" style="width: 10%"></div>
                     </div>
+                </div>
+                <div class="sidebar-content">
+                    {% for modulo in modulos %}
+                        <div class="bg-light px-4 py-2 small font-weight-bold text-muted text-uppercase">
+                            {{ modulo.titulo }}
+                        </div>
+                        {% for a in modulo.aulas.all %}
+                            <a href="{% url 'visualizacao_aula' a.id %}" class="aula-item {% if a.id == aula.id %}active{% endif %}">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="small"><i class="fas fa-play-circle mr-2"></i>{{ a.titulo }}</span>
+                                    {% if a.id in aulas_concluidas %}
+                                        <i class="fas fa-check-circle text-success"></i>
+                                    {% endif %}
+                                </div>
+                            </a>
+                        {% endfor %}
                     {% endfor %}
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="modal fade" id="modalGlossario" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-light">
-                <h5 class="modal-title font-weight-bold">📚 Glossário da Aula</h5>
-                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-            </div>
-            <div class="modal-body p-4">
-                {% for termo, definicao in aula.glossario_json.items %}
-                    <div class="mb-3">
-                        <h6 class="text-primary font-weight-bold mb-1">{{ termo }}</h6>
-                        <p class="text-muted">{{ definicao }}</p>
-                    </div>
-                {% empty %}
-                    <p class="text-center text-muted">Nenhum termo cadastrado para esta aula.</p>
-                {% endfor %}
-            </div>
-        </div>
     </div>
 </div>
 {% endblock %}

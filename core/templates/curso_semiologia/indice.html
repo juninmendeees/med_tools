@@ -1,69 +1,126 @@
 {% extends "base.html" %}
 
 {% block content %}
+<style>
+    .bg-light-gray { background-color: #f8f9fc; }
+    .card-modulo {
+        border-radius: 10px;
+        border: 1px solid #e3e6f0;
+        margin-bottom: 1rem;
+        overflow: hidden;
+        transition: box-shadow 0.3s;
+    }
+    .card-modulo:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    }
+    .modulo-header {
+        background-color: #fff;
+        padding: 1.25rem;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .aula-item {
+        background-color: #fdfdfd;
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #f1f1f1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-decoration: none !important;
+        color: #4e73df;
+        transition: background 0.2s;
+    }
+    .aula-item:hover {
+        background-color: #f1f4ff;
+    }
+    .aula-info {
+        display: flex;
+        align-items: center;
+        color: #5a5c69;
+    }
+    .btn-estudar {
+        border-radius: 20px;
+        padding: 0.25rem 1rem;
+        font-size: 0.85rem;
+    }
+    .progress-sm { height: 8px; border-radius: 4px; }
+</style>
+
 <div class="container py-5">
-    <div class="row mb-5 align-items-center">
-        <div class="col-md-8">
-            <h1 class="font-weight-bold text-gray-800">Curso de Semiologia Médica</h1>
-            <p class="text-muted">Domine a arte do exame físico e anamnese com aulas práticas e objetivas.</p>
+    <div class="row mb-5">
+        <div class="col-lg-8">
+            <h1 class="h2 font-weight-bold text-gray-800">Curso de Semiologia Médica</h1>
+            <p class="text-muted">Aprenda as técnicas de anamnese e exame físico estruturado para a prática clínica.</p>
         </div>
-        <div class="col-md-4">
+        <div class="col-lg-4">
             <div class="card shadow-sm border-0 p-3">
-                <span class="small font-weight-bold text-muted mb-2">SEU PROGRESSO GERAL</span>
-                <div class="progress mb-2" style="height: 10px; border-radius: 5px;">
-                    <div class="progress-bar bg-success" style="width: {{ progresso_total }}%"></div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="small font-weight-bold">SEU PROGRESSO</span>
+                    <span class="small font-weight-bold text-primary">{{ progresso_total|default:"0" }}%</span>
                 </div>
-                <span class="small text-right font-weight-bold text-success">{{ progresso_total }}% concluído</span>
+                <div class="progress progress-sm mb-2">
+                    <div class="progress-bar bg-primary" style="width: {{ progresso_total|default:'0' }}%"></div>
+                </div>
+                <a href="{% if primeira_aula %}{% url 'visualizacao_aula' primeira_aula.id %}{% else %}#{% endif %}"
+                class="btn btn-primary btn-block btn-sm mt-2 shadow-sm">
+                <i class="fas fa-play mr-1"></i> Continuar de onde parei
+                </a>
             </div>
         </div>
     </div>
 
     <div class="row">
-        {% for modulo in modulos %}
-        <div class="col-12 mb-4">
-            <div class="card shadow-sm border-0 rounded-lg">
-                <div class="card-header bg-white border-0 py-4">
-                    <h4 class="font-weight-bold text-primary mb-0">
-                        <span class="text-muted mr-2">Módulo {{ modulo.ordem }}:</span> {{ modulo.titulo }}
-                    </h4>
-                </div>
-                <div class="list-group list-group-flush">
-                    {% for a in modulo.aulas.all %}
-                    <a href="{% url 'visualizacao_aula' a.id %}" class="list-group-item list-group-item-action py-3 px-4 border-light d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <div class="icon-circle bg-light mr-3">
-                                <i class="fas fa-play text-primary small"></i>
-                            </div>
-                            <div>
-                                <h6 class="mb-0 font-weight-bold">{{ a.titulo }}</h6>
-                                <span class="text-muted small">Aula {{ a.ordem }}</span>
-                            </div>
+        <div class="col-12">
+
+
+            <div class="accordion" id="accordionCursos">
+                {% for modulo in modulos %}
+                <div class="card-modulo">
+                    <div class="modulo-header" data-toggle="collapse" data-target="#collapse{{ modulo.id }}">
+                        <div>
+                            <span class="small text-muted font-weight-bold text-uppercase">Módulo {{ modulo.ordem }}</span>
+                            <h5 class="mb-0 font-weight-bold text-gray-800">{{ modulo.titulo }}</h5>
                         </div>
-                        <i class="fas fa-chevron-right text-muted"></i>
-                    </a>
-                    {% endfor %}
+                        <div class="text-right">
+                            <span class="badge badge-light border mr-2">{{ modulo.aulas.count }} aulas</span>
+                            <i class="fas fa-chevron-down text-muted"></i>
+                        </div>
+                    </div>
+
+                    <div id="collapse{{ modulo.id }}" class="collapse {% if forloop.first %}show{% endif %}" data-parent="#accordionCursos">
+                        <div class="bg-white">
+                            {% for a in modulo.aulas.all %}
+                            <a href="{% url 'visualizacao_aula' a.id %}" class="aula-item">
+                                <div class="aula-info">
+                                    <i class="fas fa-play-circle mr-3 text-muted"></i>
+                                    <div>
+                                        <span class="d-block font-weight-bold">{{ a.titulo }}</span>
+                                        <span class="small text-muted">{{ a.categoria_relacionada }}</span>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    {% if a.id in aulas_concluidas %}
+                                        <span class="badge badge-success-soft text-success mr-3">
+                                            <i class="fas fa-check"></i>
+                                        </span>
+                                    {% endif %}
+                                    <span class="btn btn-outline-primary btn-estudar">Assistir</span>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
+                {% empty %}
+                <div class="text-center py-5 bg-white rounded shadow-sm">
+                    <i class="fas fa-book-open fa-3x text-light mb-3"></i>
+                    <p class="text-muted">Nenhum módulo cadastrado ainda.</p>
+                </div>
+                {% endfor %}
             </div>
         </div>
-        {% empty %}
-        <div class="col-12 text-center py-5">
-            <p class="text-muted">Nenhum conteúdo disponível no momento.</p>
-        </div>
-        {% endfor %}
     </div>
 </div>
-
-<style>
-    .icon-circle {
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .list-group-item:hover {
-        background-color: #f8f9fc;
-    }
-</style>
 {% endblock %}
