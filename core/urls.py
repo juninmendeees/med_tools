@@ -53,5 +53,9 @@ urlpatterns = [
     #CURSO
     path('curso/aula/<int:aula_id>/', views.visualizacao_aula, name='visualizacao_aula'),
     path('curso/aula/concluir/<int:aula_id>/', views.marcar_concluida, name='marcar_concluida'),
-path('curso/', views.indice_curso, name='indice_curso'),
+    path('curso/', views.indice_curso, name='indice_curso'),
+
+    #QUESTÕES
+    path('questoes/', views.banco_questoes, name='banco_questoes'), # ESSENCIAL
+
 ]

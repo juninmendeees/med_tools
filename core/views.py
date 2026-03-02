@@ -5,21 +5,22 @@ from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.db.models import Count
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth import get_user_model  # Forma correta de chamar seu Usuario
 import mercadopago
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
 from datetime import datetime, date, time
 from weasyprint import HTML
 from .models import Anamnese, ExameFisico, Paciente, Usuario, Flashcard, Modulo
 from .forms import ContatoForm
 import json
-from django.db.models import Q
 from .forms import FlashcardForm
 from .models import Flashcard
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.db.models import Count, Q
+from .models import Modulo, Aula, ProgressoAula
 
 
 def index(request):
@@ -743,34 +744,23 @@ def visualizacao_aula(request, aula_id):
     aula_atual = get_object_or_404(Aula, id=aula_id)
     modulos = Modulo.objects.prefetch_related('aulas').order_by('ordem')
 
-    # Pega as IDs das aulas que o usuário já concluiu para marcar na sidebar
     aulas_concluidas = ProgressoAula.objects.filter(
         usuario=request.user, concluida=True
     ).values_list('aula_id', flat=True)
 
-    return render(request, 'curso/aula.html', {
+    context = {
         'aula': aula_atual,
         'modulos': modulos,
         'aulas_concluidas': aulas_concluidas,
-    })
-
-
-from django.shortcuts import get_object_or_404, redirect
-from .models import Aula, ProgressoAula
+    }
+    # Certifique-se de que a pasta é curso_semiologia
+    return render(request, 'curso_semiologia/curso.html', context)
 
 
 @login_required
 def marcar_concluida(request, aula_id):
     aula = get_object_or_404(Aula, id=aula_id)
-
-    # Cria o registro de progresso ou apenas recupera se já existir (get_or_create)
-    ProgressoAula.objects.get_or_create(
-        usuario=request.user,
-        aula=aula,
-        defaults={'concluida': True}
-    )
-
-    # Redireciona o usuário de volta para a página da aula que ele estava assistindo
+    ProgressoAula.objects.get_or_create(usuario=request.user, aula=aula, defaults={'concluida': True})
     return redirect('visualizacao_aula', aula_id=aula.id)
 
 
@@ -778,12 +768,27 @@ def marcar_concluida(request, aula_id):
 def indice_curso(request):
     modulos = Modulo.objects.prefetch_related('aulas').order_by('ordem')
 
-    # Opcional: Calcular progresso total do curso
+    # Lista de IDs de aulas concluídas pelo usuário
+    aulas_concluidas = ProgressoAula.objects.filter(
+        usuario=request.user, concluida=True
+    ).values_list('aula_id', flat=True)
+
+    # Primeira aula para o botão "Continuar"
+    primeira_aula = Aula.objects.order_by('modulo__ordem', 'ordem').first()
+
+    # Cálculo de progresso total
     total_aulas = Aula.objects.count()
-    concluidas = ProgressoAula.objects.filter(usuario=request.user, concluida=True).count()
-    progresso_total = int((concluidas / total_aulas) * 100) if total_aulas > 0 else 0
+    concluidas_count = len(aulas_concluidas)
+    progresso_total = int((concluidas_count / total_aulas) * 100) if total_aulas > 0 else 0
 
     return render(request, 'curso_semiologia/indice.html', {
         'modulos': modulos,
-        'progresso_total': progresso_total
+        'aulas_concluidas': aulas_concluidas,
+        'progresso_total': progresso_total,
+        'primeira_aula': primeira_aula,
     })
+
+# Rota temporária para evitar o erro NoReverseMatch até você criar o banco de questões
+@login_required
+def banco_questoes(request):
+    return render(request, 'em_construcao.html')

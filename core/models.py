@@ -321,31 +321,45 @@ class Flashcard(models.Model):
     def __str__(self):
         return f"{self.categoria} - {self.pergunta[:30]}"
 
-class Modulo(models.Model):
-        titulo = models.CharField(max_length=200)
-        ordem = models.IntegerField(default=1)
 
-        def __str__(self):
-            return f"{self.ordem}. {self.titulo}"
+from django.db import models
+from django.conf import settings
+from django.db.models import Count, Q
+
+
+class Modulo(models.Model):
+    titulo = models.CharField(max_length=200)
+    ordem = models.IntegerField(default=1)
+
+    class Meta:
+        ordering = ['ordem']
+
+    def __str__(self):
+        return f"{self.ordem}. {self.titulo}"
+
 
 class Aula(models.Model):
-        modulo = models.ForeignKey(Modulo, on_delete=models.CASCADE, related_name='aulas')
-        titulo = models.CharField(max_length=200)
-        video_url = models.CharField(max_length=255, help_text="ID do vídeo ou URL (YouTube/Vimeo)")
-        ordem = models.IntegerField(default=1)
+    modulo = models.ForeignKey(Modulo, on_delete=models.CASCADE, related_name='aulas')
+    titulo = models.CharField(max_length=200)
+    video_url = models.CharField(max_length=255, help_text="ID do vídeo ou URL (YouTube/Vimeo)")
+    ordem = models.IntegerField(default=1)
 
-        # Campos para filtros automáticos que você solicitou
-        categoria_relacionada = models.CharField(max_length=100, help_text="Ex: Semiologia Cardiovascular")
-        glossario_json = models.JSONField(default=dict, blank=True, help_text="Termos e definições da aula")
+    # Campos para filtros automáticos que você solicitou
+    categoria_relacionada = models.CharField(max_length=100, help_text="Ex: Semiologia Cardiovascular")
+    glossario_json = models.JSONField(default=dict, blank=True, help_text="Termos e definições da aula")
 
-        def __str__(self):
-            return self.titulo
+    class Meta:
+        ordering = ['ordem']
+
+    def __str__(self):
+        return self.titulo
+
 
 class ProgressoAula(models.Model):
-        usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-        aula = models.ForeignKey(Aula, on_delete=models.CASCADE)
-        concluida = models.BooleanField(default=False)
-        data_conclusao = models.DateTimeField(auto_now=True)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    aula = models.ForeignKey(Aula, on_delete=models.CASCADE)
+    concluida = models.BooleanField(default=False)
+    data_conclusao = models.DateTimeField(auto_now=True)
 
-        class Meta:
-            unique_together = ('usuario', 'aula')
+    class Meta:
+        unique_together = ('usuario', 'aula')
